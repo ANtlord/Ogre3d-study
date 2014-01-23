@@ -1,0 +1,4 @@
+*.o
+android/obj
+android/bin
+android/libs/
