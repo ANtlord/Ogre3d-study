@@ -5,12 +5,12 @@ LOCAL_PATH := $(call my-dir)
     LOCAL_LDLIBS	:= -landroid -lc -lm -ldl -llog -lEGL -lGLESv2
     LOCAL_LDLIBS	+= -L/home/uantlord/Develop/ogre/ogre_clean_backup/build_android/lib \
 		-L/home/uantlord/Develop/ogre/ogre_clean_backup/AndroidDependencies/lib/armeabi-v7a
-        #LOCAL_LDLIBS += -lSample_CameraTrack -lSample_CelShading -lSample_Character -lSample_Compositor -lSample_Lighting -lSample_BezierPatch -lSample_CubeMapping -lSample_DynTex
-        #LOCAL_LDLIBS += -lSample_FacialAnimation -lSample_Fresnel -lSample_Grass -lSample_ParticleFX -lSample_Lighting -lSample_MeshLod -lSample_SkyBox -lSample_SkyPlane -lSample_SkyDome -lSample_Smoke
-        #LOCAL_LDLIBS += -lSample_Water -lSample_Ocean -lSample_NewInstancing -lSample_ShaderSystem -lSample_DeferredShading -lSample_EndlessWorld -lSample_VolumeCSG -lSample_VolumeTerrain -lSample_Terrain
 
     LOCAL_LDLIBS	+= -lPlugin_ParticleFXStatic -lPlugin_OctreeSceneManagerStatic -lRenderSystem_GLES2Static -lOgreRTShaderSystemStatic -lOgreMeshLodGeneratorStatic -lOgreOverlayStatic -lOgreTerrainStatic -lOgrePagingStatic -lOgreVolumeStatic -lOgreMainStatic
-    LOCAL_LDLIBS	+= -lzzip -lz -lFreeImage -lfreetype -lOIS  /home/uantlord/Develop/ogre/ogre_clean_backup/build_android/systemlibs/armeabi-v7a/libsupc++.a /home/uantlord/Develop/ogre/ogre_clean_backup/build_android/systemlibs/armeabi-v7a/libstdc++.a /home/uantlord/Develop/ogre/ogre_clean_backup/build_android/SampleBrowserNDK/obj/local/armeabi-v7a/libcpufeatures.a
+    LOCAL_LDLIBS	+= -lzzip -lz -lFreeImage -lfreetype -lOIS \
+					   /home/uantlord/Develop/ogre/ogre_clean_backup/build_android/systemlibs/armeabi-v7a/libsupc++.a \
+					   /home/uantlord/Develop/ogre/ogre_clean_backup/build_android/systemlibs/armeabi-v7a/libstdc++.a \
+					   /home/uantlord/Develop/ogre/ogre_clean_backup/build_android/SampleBrowserNDK/obj/local/armeabi-v7a/libcpufeatures.a
     LOCAL_STATIC_LIBRARIES := android_native_app_glue cpufeatures
 
 	LOCAL_CFLAGS := -DGL_GLEXT_PROTOTYPES=1 \

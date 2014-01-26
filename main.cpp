@@ -1,11 +1,15 @@
+#include "SampleContext.h"
+#include "SamplePlugin.h"
+#include "SdkTrays.h"
+
 #include <jni.h>
 #include <errno.h>
-
 #include <android/log.h>
 #include <android_native_app_glue.h>
 
 #include <EGL/egl.h>
 
+#include <OgreConfigFile.h>
 #include "OgreRoot.h"
 #include "OgrePlatform.h"
 #include "OgreFileSystemLayer.h"
@@ -23,6 +27,27 @@
 #include "OgreStaticPluginLoader.h"
 
 #endif
+
+#define OGRE_BUILD_COMPONENT_RTSHADERSYSTEM
+#define RTSHADER_SYSTEM_BUILD_CORE_SHADERS
+#define RTSHADER_SYSTEM_BUILD_EXT_SHADERS
+
+#ifdef INCLUDE_RTSHADER_SYSTEM
+#   include "OgreRTShaderSystem.h"
+#endif
+#ifdef OGRE_STATIC_LIB
+#   ifdef OGRE_BUILD_PLUGIN_BSP
+#       include "BSP.h"
+#   endif
+#   ifdef INCLUDE_RTSHADER_SYSTEM
+#      include "ShaderSystem.h"
+#   endif
+#   ifdef INCLUDE_RTSHADER_SYSTEM
+#      include "OgreRTShaderSystem.h"
+#   endif
+#endif
+
+
 
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "app", __VA_ARGS__))
 #define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "app", __VA_ARGS__))
@@ -77,6 +102,22 @@ static Ogre::DataStreamPtr openAPKFile(AAssetManager* asset_manager, const Ogre:
 
 static void ogre_app_init(app_user_data *data)
 {
+
+#ifdef USE_RTSHADER_SYSTEM
+  // Setup shaders
+  Ogre::RTShader::ShaderGenerator::initialize();
+
+  // The Shader generator instance
+  Ogre::RTShader::ShaderGenerator* gen = Ogre::RTShader::ShaderGenerator::getSingletonPtr();
+
+  // Create and register the material manager listener if it doesn't exist yet.
+  if(material_mgr_listener_ == NULL) {
+     material_mgr_listener_ = new ShaderGeneratorTechniqueResolverListener(gen);
+     Ogre::MaterialManager::getSingleton().addListener(material_mgr_listener_);
+  }
+
+  gen->addSceneManager(scene_mgr_);
+#endif
   LOGI("Init ogre app");
 
   /********************************* Misc ****************************/
@@ -98,7 +139,6 @@ static void ogre_app_init(app_user_data *data)
   Ogre::ArchiveManager::getSingleton().addArchiveFactory(
     new Ogre::APKZipArchiveFactory(data->android_app_state->activity->assetManager)
     );
-
   Ogre::FileSystemLayer fs_layer(OGRE_VERSION_NAME);
   Ogre::ConfigFile cf;
   cf.load(openAPKFile(data->android_app_state->activity->assetManager,
@@ -125,8 +165,6 @@ static void ogre_app_init(app_user_data *data)
   }
 
   Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
-
-
   /********************************* Create Scene ****************************/
 
   // Create the SceneManager, in this case a generic one
@@ -232,7 +270,6 @@ static void app_init(app_user_data* data)
   data->plugin_loader = new Ogre::StaticPluginLoader();
   data->plugin_loader->load();
 #endif
-
   data->root->setRenderSystem(data->root->getAvailableRenderers().at(0));
   data->root->initialise(false);
   data->init = true;
