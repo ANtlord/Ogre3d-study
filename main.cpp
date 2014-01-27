@@ -104,80 +104,68 @@ static Ogre::DataStreamPtr openAPKFile(AAssetManager* asset_manager, const Ogre:
 
 static void ogre_app_init(app_user_data *data)
 {
-
-  LOGI("Init ogre app");
-
-  /********************************* Misc ****************************/
-
-  Ogre::TextureManager::getSingleton().setDefaultNumMipmaps(5);
-
-  // Ogre::Root::getSingleton().getRenderSystem()->_initRenderTargets();
-
-  // // Clear event times
-  // Ogre::Root::getSingleton().clearEventTimes();
-
-
   /********************************* Load resources ****************************/
 
-  Ogre::ArchiveManager::getSingleton().addArchiveFactory(
-    new Ogre::APKFileSystemArchiveFactory(data->android_app_state->activity->assetManager)
+    Ogre::ArchiveManager::getSingleton().addArchiveFactory(
+        new Ogre::APKFileSystemArchiveFactory(
+            data->android_app_state->activity->assetManager)
     );
 
-  Ogre::ArchiveManager::getSingleton().addArchiveFactory(
-    new Ogre::APKZipArchiveFactory(data->android_app_state->activity->assetManager)
+    Ogre::ArchiveManager::getSingleton().addArchiveFactory(
+          new Ogre::APKZipArchiveFactory(
+              data->android_app_state->activity->assetManager)
     );
-  Ogre::FileSystemLayer fs_layer(OGRE_VERSION_NAME);
-  Ogre::ConfigFile cf;
-  cf.load(openAPKFile(data->android_app_state->activity->assetManager,
-                      fs_layer.getConfigFilePath("resources.cfg")));
+    Ogre::FileSystemLayer fs_layer(OGRE_VERSION_NAME);
+    Ogre::ConfigFile cf;
+    cf.load(openAPKFile(data->android_app_state->activity->assetManager,
+                          fs_layer.getConfigFilePath("resources.cfg")));
 
-  Ogre::ConfigFile::SectionIterator seci = cf.getSectionIterator();
-  Ogre::String sec, type, arch;
+    Ogre::ConfigFile::SectionIterator seci = cf.getSectionIterator();
+    Ogre::String sec, type, arch;
 
-  // go through all specified resource groups
-  while (seci.hasMoreElements())
-  {
-    sec = seci.peekNextKey();
-    Ogre::ConfigFile::SettingsMultiMap* settings = seci.getNext();
-    Ogre::ConfigFile::SettingsMultiMap::iterator i;
-
-    // go through all resource paths
-    for (i = settings->begin(); i != settings->end(); i++)
+    // go through all specified resource groups
+    while (seci.hasMoreElements())
     {
-      type = i->first;
-      arch = i->second;
+        sec = seci.peekNextKey();
+        Ogre::ConfigFile::SettingsMultiMap* settings = seci.getNext();
+        Ogre::ConfigFile::SettingsMultiMap::iterator i;
 
-      Ogre::ResourceGroupManager::getSingleton().addResourceLocation(arch, type, sec);
+        // go through all resource paths
+        for (i = settings->begin(); i != settings->end(); i++)
+        {
+            type = i->first;
+            arch = i->second;
+
+            Ogre::ResourceGroupManager::getSingleton().addResourceLocation(arch, type, sec);
+        }
     }
-  }
 
-  Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
-  /********************************* Create Scene ****************************/
+    Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
+    /********************************* Create Scene ****************************/
 
-  // Create the SceneManager, in this case a generic one
-  Ogre::SceneManager *scene_manager = Ogre::Root::getSingleton().createSceneManager("DefaultSceneManager");
-  // Create the camera
-  Ogre::Camera *camera = scene_manager->createCamera("PlayerCam");
+    // Create the SceneManager, in this case a generic one
+    Ogre::SceneManager *scene_manager = Ogre::Root::getSingleton().createSceneManager("DefaultSceneManager");
+    // Create the camera
+    Ogre::Camera *camera = scene_manager->createCamera("PlayerCam");
 
-  // Look back along -Z
-  camera->setPosition(Ogre::Vector3(0,0,100));
-  camera->lookAt(Ogre::Vector3(0,0,-300));
-  camera->setNearClipDistance(5);
-  camera->setFarClipDistance(5000);
+    // Look back along -Z
+    camera->setPosition(Ogre::Vector3(0,0,100));
+    camera->lookAt(Ogre::Vector3(0,0,-300));
+    camera->setNearClipDistance(5);
+    camera->setFarClipDistance(5000);
 
-  // Create one viewport, entire window
-  Ogre::Viewport* vp = data->window->addViewport(camera);
-  vp->setBackgroundColour(Ogre::ColourValue(0.9,0.5,0.5));
-  // Alter the camera aspect ratio to match the viewport
-  camera->setAspectRatio(Ogre::Real(vp->getActualWidth()) / Ogre::Real(vp->getActualHeight()));
+    // Create one viewport, entire window
+    Ogre::Viewport* vp = data->window->addViewport(camera);
+    vp->setBackgroundColour(Ogre::ColourValue(0.9,0.5,0.5));
+    // Alter the camera aspect ratio to match the viewport
+    camera->setAspectRatio(Ogre::Real(vp->getActualWidth()) / Ogre::Real(vp->getActualHeight()));
 
+    // Set ambient light
+    scene_manager->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
 
-  // Set ambient light
-  scene_manager->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
-
-  // Create a light
-  Ogre::Light* l = scene_manager->createLight("MainLight");
-  l->setPosition(20,80,50);
+    // Create a light
+    Ogre::Light* l = scene_manager->createLight("MainLight");
+    l->setPosition(20,80,50);
 }
 
 
