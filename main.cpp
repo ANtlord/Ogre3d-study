@@ -35,9 +35,6 @@
 #define RTSHADER_SYSTEM_BUILD_CORE_SHADERS
 #define RTSHADER_SYSTEM_BUILD_EXT_SHADERS
 
-#ifdef INCLUDE_RTSHADER_SYSTEM
-#   include "OgreRTShaderSystem.h"
-#endif
 #ifdef OGRE_STATIC_LIB
 #   ifdef OGRE_BUILD_PLUGIN_BSP
 #       include "BSP.h"
@@ -45,11 +42,11 @@
 #   ifdef INCLUDE_RTSHADER_SYSTEM
 #      include "ShaderSystem.h"
 #   endif
-#   ifdef INCLUDE_RTSHADER_SYSTEM
-#      include "OgreRTShaderSystem.h"
-#   endif
 #endif
 
+#ifdef INCLUDE_RTSHADER_SYSTEM
+#   include "OgreRTShaderSystem.h"
+#endif
 
 
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "app", __VA_ARGS__))
@@ -151,7 +148,7 @@ static void ogre_app_init(app_user_data *data)
 
     // Look back along -Z
     camera->setPosition(Ogre::Vector3(0,0,100));
-    camera->lookAt(Ogre::Vector3(0,0,-300));
+    camera->lookAt(Ogre::Vector3(0,0,-100));
     camera->setNearClipDistance(5);
     camera->setFarClipDistance(5000);
 
@@ -162,20 +159,21 @@ static void ogre_app_init(app_user_data *data)
     camera->setAspectRatio(Ogre::Real(vp->getActualWidth()) / Ogre::Real(vp->getActualHeight()));
 
     // Set ambient light
-    scene_manager->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
+    //scene_manager->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
 
     // Create a light
-    Ogre::Light* l = scene_manager->createLight("MainLight");
-    l->setPosition(20,80,50);
-    Ogre::Plane plane(Ogre::Vector3(0,0,1), Ogre::Vector3(1,0,1), Ogre::Vector3(0,1,1));
-    Ogre::MeshManager::getSingleton().createPlane("ground",
-                                                Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-                                                plane, 1500, 1500, 20, 20, true,
-                                                1, 5.0, 5.0, Ogre::Vector3::UNIT_Z);
-    Ogre::Entity* entGround = scene_manager->createEntity("GroundEntity", "ground");
-    scene_manager->getRootSceneNode()->createChildSceneNode()->attachObject(entGround);
-    entGround->setMaterialName("Examples/Rocky");
-    entGround->setCastShadows(false);
+    //Ogre::Light* l = scene_manager->createLight("MainLight");
+    //l->setPosition(20,80,50);
+    //Ogre::Plane plane(Ogre::Vector3(0,0,1), Ogre::Vector3(1,0,1), Ogre::Vector3(0,1,1));
+    //Ogre::MeshManager::getSingleton().createPlane("ground",
+                                                //Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+                                                //plane, 1500, 1500, 20, 20, true,
+                                                //1, 5.0, 5.0, Ogre::Vector3::UNIT_Y);
+
+    //Ogre::Entity* entGround = scene_manager->createEntity("GroundEntity", "ground");
+    //scene_manager->getRootSceneNode()->createChildSceneNode()->attachObject(entGround);
+    //entGround->setMaterialName("Examples/Rocky");
+    //entGround->setCastShadows(false);
 }
 
 
