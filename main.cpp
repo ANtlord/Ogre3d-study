@@ -1,7 +1,3 @@
-#include "SampleContext.h"
-#include "SamplePlugin.h"
-#include "SdkTrays.h"
-
 #include <OgreShaderGenerator.h>
 #include <jni.h>
 #include <OgreSphere.h>
@@ -21,10 +17,16 @@
 #include "Android/OgreAPKZipArchive.h"
 #include "Android/OgreAndroidEGLWindow.h"
 
+#  define _OgreSampleExport
+#  define _OgreSampleClassExport
 
 #ifdef OGRE_STATIC_LIB
+#  ifdef OGRE_BUILD_RENDERSYSTEM_GLES2
+#    undef OGRE_STATIC_GLES
+#    define INCLUDE_RTSHADER_SYSTEM
+#    define OGRE_STATIC_GLES2
+#  endif
 
-#define OGRE_STATIC_GLES2
 #define OGRE_STATIC_OctreeSceneManager
 
 #include "OgreStaticPluginLoader.h"
@@ -158,22 +160,22 @@ static void ogre_app_init(app_user_data *data)
     // Alter the camera aspect ratio to match the viewport
     camera->setAspectRatio(Ogre::Real(vp->getActualWidth()) / Ogre::Real(vp->getActualHeight()));
 
-    // Set ambient light
-    //scene_manager->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
+    //Set ambient light
+    scene_manager->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
 
-    // Create a light
-    //Ogre::Light* l = scene_manager->createLight("MainLight");
-    //l->setPosition(20,80,50);
-    //Ogre::Plane plane(Ogre::Vector3(0,0,1), Ogre::Vector3(1,0,1), Ogre::Vector3(0,1,1));
-    //Ogre::MeshManager::getSingleton().createPlane("ground",
-                                                //Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-                                                //plane, 1500, 1500, 20, 20, true,
-                                                //1, 5.0, 5.0, Ogre::Vector3::UNIT_Y);
+    //Create a light
+    Ogre::Light* l = scene_manager->createLight("MainLight");
+    l->setPosition(20,80,50);
+    Ogre::Plane plane(Ogre::Vector3(0,0,1), Ogre::Vector3(1,0,0), Ogre::Vector3(0,1,0));
+    Ogre::MeshManager::getSingleton().createPlane("ground",
+                                                Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+                                                plane, 1500, 1500, 20, 20, true,
+                                                1, 5.0, 5.0, Ogre::Vector3::UNIT_Y);
 
-    //Ogre::Entity* entGround = scene_manager->createEntity("GroundEntity", "ground");
-    //scene_manager->getRootSceneNode()->createChildSceneNode()->attachObject(entGround);
-    //entGround->setMaterialName("Examples/Rocky");
-    //entGround->setCastShadows(false);
+    Ogre::Entity* entGround = scene_manager->createEntity("GroundEntity", "ground");
+    entGround->setMaterialName("Ogre/Skin");
+    entGround->setCastShadows(false);
+    scene_manager->getRootSceneNode()->createChildSceneNode()->attachObject(entGround);
 }
 
 
