@@ -2,6 +2,7 @@
 #include "SamplePlugin.h"
 #include "SdkTrays.h"
 
+#include <OgreShaderGenerator.h>
 #include <jni.h>
 #include <errno.h>
 #include <android/log.h>
@@ -10,6 +11,7 @@
 #include <EGL/egl.h>
 
 #include <OgreConfigFile.h>
+#include "OgreMaterialManager.h"
 #include "OgreRoot.h"
 #include "OgrePlatform.h"
 #include "OgreFileSystemLayer.h"
@@ -103,21 +105,6 @@ static Ogre::DataStreamPtr openAPKFile(AAssetManager* asset_manager, const Ogre:
 static void ogre_app_init(app_user_data *data)
 {
 
-#ifdef USE_RTSHADER_SYSTEM
-  // Setup shaders
-  Ogre::RTShader::ShaderGenerator::initialize();
-
-  // The Shader generator instance
-  Ogre::RTShader::ShaderGenerator* gen = Ogre::RTShader::ShaderGenerator::getSingletonPtr();
-
-  // Create and register the material manager listener if it doesn't exist yet.
-  if(material_mgr_listener_ == NULL) {
-     material_mgr_listener_ = new ShaderGeneratorTechniqueResolverListener(gen);
-     Ogre::MaterialManager::getSingleton().addListener(material_mgr_listener_);
-  }
-
-  gen->addSceneManager(scene_mgr_);
-#endif
   LOGI("Init ogre app");
 
   /********************************* Misc ****************************/
@@ -169,7 +156,6 @@ static void ogre_app_init(app_user_data *data)
 
   // Create the SceneManager, in this case a generic one
   Ogre::SceneManager *scene_manager = Ogre::Root::getSingleton().createSceneManager("DefaultSceneManager");
-
   // Create the camera
   Ogre::Camera *camera = scene_manager->createCamera("PlayerCam");
 
@@ -181,28 +167,10 @@ static void ogre_app_init(app_user_data *data)
 
   // Create one viewport, entire window
   Ogre::Viewport* vp = data->window->addViewport(camera);
-  vp->setBackgroundColour(Ogre::ColourValue(0.5,0,0));
-
+  vp->setBackgroundColour(Ogre::ColourValue(0.9,0.5,0.5));
   // Alter the camera aspect ratio to match the viewport
   camera->setAspectRatio(Ogre::Real(vp->getActualWidth()) / Ogre::Real(vp->getActualHeight()));
 
-  Ogre::Entity* ogreHead = scene_manager->createEntity("Head", "ogrehead.mesh");
-
-  Ogre::SceneNode* headNode = scene_manager->getRootSceneNode()->createChildSceneNode();
-  headNode->attachObject(ogreHead);
-
-  Ogre::Plane plane(Ogre::Vector3::UNIT_Y, 0);
-
-  Ogre::MeshManager::getSingleton().createPlane("ground",
-                                                Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-                                                plane, 1500, 1500, 20, 20, true,
-                                                1, 5, 5, Ogre::Vector3::UNIT_Z);
-
-  Ogre::Entity* entGround = scene_manager->createEntity("GroundEntity", "ground");
-  scene_manager->getRootSceneNode()->createChildSceneNode()->attachObject(entGround);
-
-  entGround->setMaterialName("Examples/Rocky");
-  entGround->setCastShadows(false);
 
   // Set ambient light
   scene_manager->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
