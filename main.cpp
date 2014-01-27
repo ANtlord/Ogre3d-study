@@ -4,6 +4,7 @@
 
 #include <OgreShaderGenerator.h>
 #include <jni.h>
+#include <OgreSphere.h>
 #include <errno.h>
 #include <android/log.h>
 #include <android_native_app_glue.h>
@@ -166,6 +167,15 @@ static void ogre_app_init(app_user_data *data)
     // Create a light
     Ogre::Light* l = scene_manager->createLight("MainLight");
     l->setPosition(20,80,50);
+    Ogre::Plane plane(Ogre::Vector3(0,0,1), Ogre::Vector3(1,0,1), Ogre::Vector3(0,1,1));
+    Ogre::MeshManager::getSingleton().createPlane("ground",
+                                                Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+                                                plane, 1500, 1500, 20, 20, true,
+                                                1, 5.0, 5.0, Ogre::Vector3::UNIT_Z);
+    Ogre::Entity* entGround = scene_manager->createEntity("GroundEntity", "ground");
+    scene_manager->getRootSceneNode()->createChildSceneNode()->attachObject(entGround);
+    entGround->setMaterialName("Examples/Rocky");
+    entGround->setCastShadows(false);
 }
 
 
