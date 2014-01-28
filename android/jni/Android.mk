@@ -37,7 +37,7 @@ LOCAL_PATH := $(call my-dir)
 	LOCAL_CFLAGS += -fexceptions -frtti -x c++ -D___ANDROID___ -DANDROID -DZZIP_OMIT_CONFIG_H -DINCLUDE_RTSHADER_SYSTEM=1
 
         LOCAL_PATH := /home/uantlord/Develop/ForumOgreProj/
-        LOCAL_SRC_FILES := main.cpp
+        LOCAL_SRC_FILES := main.cpp ShaderGeneratorTechniqueResolverListener.cpp
 
     include $(BUILD_SHARED_LIBRARY)
 
