@@ -1,21 +1,11 @@
-#include <OgreShaderGenerator.h>
-#include <jni.h>
-#include <OgreSphere.h>
-#include <errno.h>
+#include "OgrePlatform.h"
+
+#include "ShaderGeneratorTechniqueResolverListener.h"
 #include <android/log.h>
 #include <android_native_app_glue.h>
-
 #include <EGL/egl.h>
 
-#include <OgreConfigFile.h>
-#include "OgreMaterialManager.h"
-#include "OgreRoot.h"
-#include "OgrePlatform.h"
 #include "OgreFileSystemLayer.h"
-
-#include "Android/OgreAPKFileSystemArchive.h"
-#include "Android/OgreAPKZipArchive.h"
-#include "Android/OgreAndroidEGLWindow.h"
 
 #  define _OgreSampleExport
 #  define _OgreSampleClassExport
@@ -29,7 +19,6 @@
 
 #define OGRE_STATIC_OctreeSceneManager
 
-#include "OgreStaticPluginLoader.h"
 
 #endif
 
@@ -37,23 +26,40 @@
 #define RTSHADER_SYSTEM_BUILD_CORE_SHADERS
 #define RTSHADER_SYSTEM_BUILD_EXT_SHADERS
 
-#ifdef OGRE_STATIC_LIB
+//#ifdef OGRE_STATIC_LIB
 #   ifdef OGRE_BUILD_PLUGIN_BSP
 #       include "BSP.h"
 #   endif
 #   ifdef INCLUDE_RTSHADER_SYSTEM
 #      include "ShaderSystem.h"
 #   endif
-#endif
+//#endif
 
-#ifdef INCLUDE_RTSHADER_SYSTEM
-#   include "OgreRTShaderSystem.h"
-#endif
 
 
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "app", __VA_ARGS__))
 #define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "app", __VA_ARGS__))
 #define LOGE(...) ((void)__android_log_print(ANDROID_LOG_ERROR, "app", __VA_ARGS__))
+
+#include "OgreStaticPluginLoader.h"
+#include <jni.h>
+#include <OgreSphere.h>
+#include <errno.h>
+
+
+#include <OgreConfigFile.h>
+#include <OgreShaderGenerator.h>
+#include "OgreMaterialManager.h"
+#include "OgreRoot.h"
+
+#include "Android/OgreAPKFileSystemArchive.h"
+#include "Android/OgreAPKZipArchive.h"
+#include "Android/OgreAndroidEGLWindow.h"
+
+#ifdef INCLUDE_RTSHADER_SYSTEM
+#   include "OgreRTShaderSystem.h"
+#endif
+
 
 /**
  * Our saved state data.
@@ -104,6 +110,9 @@ static Ogre::DataStreamPtr openAPKFile(AAssetManager* asset_manager, const Ogre:
 
 static void ogre_app_init(app_user_data *data)
 {
+#ifdef INCLUDE_RTSHADER_SYSTEM
+    LOGI("100ways RTSS was included");
+#endif
   /********************************* Load resources ****************************/
 
     Ogre::ArchiveManager::getSingleton().addArchiveFactory(
@@ -145,6 +154,16 @@ static void ogre_app_init(app_user_data *data)
 
     // Create the SceneManager, in this case a generic one
     Ogre::SceneManager *scene_manager = Ogre::Root::getSingleton().createSceneManager("DefaultSceneManager");
+
+#ifdef INCLUDE_RTSHADER_SYSTEM
+    Ogre::RTShader::ShaderGenerator::initialize();
+    // The Shader generator instance
+    Ogre::RTShader::ShaderGenerator* gen = Ogre::RTShader::ShaderGenerator::getSingletonPtr();
+    ShaderGeneratorTechniqueResolverListener * material_mgr_listener = new ShaderGeneratorTechniqueResolverListener(gen);
+    Ogre::MaterialManager::getSingleton().addListener(material_mgr_listener);
+    gen->addSceneManager(scene_manager);
+#endif
+
     // Create the camera
     Ogre::Camera *camera = scene_manager->createCamera("PlayerCam");
 
@@ -169,7 +188,7 @@ static void ogre_app_init(app_user_data *data)
     Ogre::Plane plane(Ogre::Vector3(0,0,1), Ogre::Vector3(1,0,0), Ogre::Vector3(0,1,0));
     Ogre::MeshManager::getSingleton().createPlane("ground",
                                                 Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-                                                plane, 1500, 1500, 20, 20, true,
+                                                plane, 15, 15, 20, 20, true,
                                                 1, 5.0, 5.0, Ogre::Vector3::UNIT_Y);
 
     Ogre::Entity* entGround = scene_manager->createEntity("GroundEntity", "ground");
