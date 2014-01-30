@@ -1,0 +1,35 @@
+#!/usr/bin/python
+import os
+from subprocess import call,check_output,check_call
+
+print "PREPARE FOR BUILDING..."
+print "OGRE_ROOT=",os.environ['OGRE_ROOT']
+print "ANDROID_NDK=",os.environ['ANDROID_NDK']
+print "LOCAL_PATH",os.environ['LOCAL_PATH']
+
+ogrt = os.environ['OGRE_ROOT']
+andn = os.environ['ANDROID_NDK']
+andb = os.environ['ANDROID_BUILD']
+arme = os.environ['ARMEABI']
+pwdpath = os.environ['LOCAL_PATH']
+
+mkin = open("android/jni/Android.mk.in","r")
+mkind = mkin.read()
+
+mkind = mkind.replace("@OGRE_ROOT",ogrt)
+mkind = mkind.replace("@ANDROID_NDK_ROOT",andn)
+mkind = mkind.replace("@LOCAL_PATH",pwdpath)
+mkind = mkind.replace("@ANDROID_BUILD",andb)
+mkind = mkind.replace("@ARMEABI",arme)
+
+mk = open("android/jni/Android.mk","w")
+mk.write(mkind)
+
+#android update project -t 1 -p . -s
+#ndk-build
+#ant debug install
+#longbuildcommand = "cd android ; android update project -t 1 -p . -s ; ndk-build ; ant debug install ; cd - ;"
+print 'Change directory=',check_call("cd android", shell=True)
+print 'Update android project=',check_call("cd android; android update project -t 1 -p . -s", shell=True)
+print 'NDK-build=',check_call("cd android; ndk-build",shell=True)
+print 'Ant install=',check_call("cd android; ant debug install",shell=True)

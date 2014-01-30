@@ -1,0 +1,7 @@
+#!/bin/bash
+
+export OGRE_ROOT=/home/nvpopov/apps/ogre1_9
+export ANDROID_NDK=/home/nvpopov/apps/android-deps/android-ndk-r9c
+export ANDROID_BUILD=android_build
+export ARMEABI=armeabi
+export LOCAL_PATH=`pwd`
