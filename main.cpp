@@ -181,20 +181,13 @@ static void ogre_app_init(app_user_data *data)
 
     //Set ambient light
     scene_manager->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
-
+    //add a ogrehead to scene
+    Ogre::Entity* ogreHead = scene_manager->createEntity("Head", "ogrehead.mesh");
+    scene_manager->getRootSceneNode()->createChildSceneNode()->attachObject(ogreHead);
+    
     //Create a light
     Ogre::Light* l = scene_manager->createLight("MainLight");
     l->setPosition(20,80,50);
-    Ogre::Plane plane(Ogre::Vector3(0,0,1), Ogre::Vector3(1,0,0), Ogre::Vector3(0,1,0));
-    Ogre::MeshManager::getSingleton().createPlane("ground",
-                                                Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-                                                plane, 15, 15, 20, 20, true,
-                                                1, 5.0, 5.0, Ogre::Vector3::UNIT_Y);
-
-    Ogre::Entity* entGround = scene_manager->createEntity("GroundEntity", "ground");
-    entGround->setMaterialName("Ogre/Skin");
-    entGround->setCastShadows(false);
-    scene_manager->getRootSceneNode()->createChildSceneNode()->attachObject(entGround);
 }
 
 
