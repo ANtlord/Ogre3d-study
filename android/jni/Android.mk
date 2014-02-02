@@ -1,6 +1,6 @@
 LOCAL_PATH := $(call my-dir)
     include $(CLEAR_VARS)
-    LOCAL_MODULE    := ForumOgreProject
+    LOCAL_MODULE    := GeomWars
 
     OGRE_PATH		:= /home/nazak/dev/ogre19-test
     OGRE_ANDROID_PATH := /home/nazak/dev/ogre19-test/android_build
@@ -34,12 +34,13 @@ LOCAL_PATH := $(call my-dir)
 
 	LOCAL_CFLAGS += -I$(OGRE_PATH)/AndroidDependencies/include \
 		-I$(OGRE_PATH)/AndroidDependencies/include/OIS \
-		-I$(OGRE_ANDROID_PATH)/Samples/include   
+		-I$(OGRE_ANDROID_PATH)/Samples/include \
+		-I$(LOCAL_PATH)/../   
 
 	LOCAL_CFLAGS += -fexceptions -frtti -x c++ -D___ANDROID___ -DANDROID -DZZIP_OMIT_CONFIG_H -DINCLUDE_RTSHADER_SYSTEM=1
 
         LOCAL_PATH := ../
-        LOCAL_SRC_FILES := main.cpp ShaderGeneratorTechniqueResolverListener.cpp
+        LOCAL_SRC_FILES := gwApp.cpp gwAndroidSys.cpp ShaderGeneratorTechniqueResolverListener.cpp
 
     include $(BUILD_SHARED_LIBRARY)
 

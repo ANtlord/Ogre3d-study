@@ -1,102 +1,11 @@
-#include "OgrePlatform.h"
-
-#include "ShaderGeneratorTechniqueResolverListener.h"
-#include <android/log.h>
-#include <android_native_app_glue.h>
-#include <EGL/egl.h>
-
-#include "OgreFileSystemLayer.h"
-
-#  define _OgreSampleExport
-#  define _OgreSampleClassExport
-
-#ifdef OGRE_STATIC_LIB
-#  ifdef OGRE_BUILD_RENDERSYSTEM_GLES2
-#    undef OGRE_STATIC_GLES
-#    define INCLUDE_RTSHADER_SYSTEM
-#    define OGRE_STATIC_GLES2
-#  endif
-
-#define OGRE_STATIC_OctreeSceneManager
+#include "gwAndroidSys.h"
 
 
-#endif
-
-#define OGRE_BUILD_COMPONENT_RTSHADERSYSTEM
-#define RTSHADER_SYSTEM_BUILD_CORE_SHADERS
-#define RTSHADER_SYSTEM_BUILD_EXT_SHADERS
-
-//#ifdef OGRE_STATIC_LIB
-#   ifdef OGRE_BUILD_PLUGIN_BSP
-#       include "BSP.h"
-#   endif
-#   ifdef INCLUDE_RTSHADER_SYSTEM
-#      include "ShaderSystem.h"
-#   endif
-//#endif
-
-
-
-#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "app", __VA_ARGS__))
-#define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "app", __VA_ARGS__))
-#define LOGE(...) ((void)__android_log_print(ANDROID_LOG_ERROR, "app", __VA_ARGS__))
-
-#include "OgreStaticPluginLoader.h"
-#include <jni.h>
-#include <OgreSphere.h>
-#include <errno.h>
-
-
-#include <OgreConfigFile.h>
-#include <OgreShaderGenerator.h>
-#include "OgreMaterialManager.h"
-#include "OgreRoot.h"
-
-#include "Android/OgreAPKFileSystemArchive.h"
-#include "Android/OgreAPKZipArchive.h"
-#include "Android/OgreAndroidEGLWindow.h"
-
-#ifdef INCLUDE_RTSHADER_SYSTEM
-#   include "OgreRTShaderSystem.h"
-#endif
-
-
-/**
- * Our saved state data.
- */
-struct saved_state
-{
-};
-
-/**
- * Shared state for our app.
- */
-struct app_user_data
-{
-  android_app *android_app_state;
-
-  bool init;
-  bool animating;
-
-  Ogre::RenderWindow *window;
-  Ogre::Root *root;
-
-  saved_state state;
-
-#ifdef OGRE_STATIC_LIB
-  Ogre::StaticPluginLoader *plugin_loader;
-#endif
-};
-
-
-
-
-static Ogre::DataStreamPtr openAPKFile(AAssetManager* asset_manager, const Ogre::String& fileName)
-{
+// to system level #preinit resources
+static Ogre::DataStreamPtr openAPKFile(AAssetManager* asset_manager, const Ogre::String& fileName){
   Ogre::DataStreamPtr stream;
   AAsset* asset = AAssetManager_open(asset_manager, fileName.c_str(), AASSET_MODE_BUFFER);
-  if (asset)
-  {
+  if (asset){
     off_t length = AAsset_getLength(asset);
     void* membuf = OGRE_MALLOC(length, Ogre::MEMCATEGORY_GENERAL);
     memcpy(membuf, AAsset_getBuffer(asset), length);
@@ -108,10 +17,10 @@ static Ogre::DataStreamPtr openAPKFile(AAssetManager* asset_manager, const Ogre:
 }
 
 
-static void ogre_app_init(app_user_data *data)
-{
+static void ogre_app_init(app_user_data *data){
+  //system level #init resources
 #ifdef INCLUDE_RTSHADER_SYSTEM
-    LOGI("100ways RTSS was included");
+    LOGI("GW RTSS was included");
 #endif
   /********************************* Load resources ****************************/
 
@@ -133,15 +42,13 @@ static void ogre_app_init(app_user_data *data)
     Ogre::String sec, type, arch;
 
     // go through all specified resource groups
-    while (seci.hasMoreElements())
-    {
+    while (seci.hasMoreElements()){
         sec = seci.peekNextKey();
         Ogre::ConfigFile::SettingsMultiMap* settings = seci.getNext();
         Ogre::ConfigFile::SettingsMultiMap::iterator i;
 
         // go through all resource paths
-        for (i = settings->begin(); i != settings->end(); i++)
-        {
+        for (i = settings->begin(); i != settings->end(); i++){
             type = i->first;
             arch = i->second;
 
@@ -152,63 +59,26 @@ static void ogre_app_init(app_user_data *data)
     Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
     /********************************* Create Scene ****************************/
 
-    // Create the SceneManager, in this case a generic one
-    Ogre::SceneManager *scene_manager = Ogre::Root::getSingleton().createSceneManager("DefaultSceneManager");
-
-#ifdef INCLUDE_RTSHADER_SYSTEM
-    Ogre::RTShader::ShaderGenerator::initialize();
-    // The Shader generator instance
-    Ogre::RTShader::ShaderGenerator* gen = Ogre::RTShader::ShaderGenerator::getSingletonPtr();
-    ShaderGeneratorTechniqueResolverListener * material_mgr_listener = new ShaderGeneratorTechniqueResolverListener(gen);
-    Ogre::MaterialManager::getSingleton().addListener(material_mgr_listener);
-    gen->addSceneManager(scene_manager);
-#endif
-
-    // Create the camera
-    Ogre::Camera *camera = scene_manager->createCamera("PlayerCam");
-
-    // Look back along -Z
-    camera->setPosition(Ogre::Vector3(0,0,100));
-    camera->lookAt(Ogre::Vector3(0,0,-100));
-    camera->setNearClipDistance(5);
-    camera->setFarClipDistance(5000);
-
-    // Create one viewport, entire window
-    Ogre::Viewport* vp = data->window->addViewport(camera);
-    vp->setBackgroundColour(Ogre::ColourValue(0.9,0.5,0.5));
-    // Alter the camera aspect ratio to match the viewport
-    camera->setAspectRatio(Ogre::Real(vp->getActualWidth()) / Ogre::Real(vp->getActualHeight()));
-
-    //Set ambient light
-    scene_manager->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
-    //add a ogrehead to scene
-    Ogre::Entity* ogreHead = scene_manager->createEntity("Head", "ogrehead.mesh");
-    scene_manager->getRootSceneNode()->createChildSceneNode()->attachObject(ogreHead);
-    
-    //Create a light
-    Ogre::Light* l = scene_manager->createLight("MainLight");
-    l->setPosition(20,80,50);
+	userapp.createScene();    
 }
 
 
-static int app_setup_display(app_user_data* data)
-{
-  LOGI("Setup display");
+static int app_setup_display(app_user_data* data){
+  // to system level
+  LOGI("GW Setup display");
 
   AConfiguration *config = AConfiguration_new();
   AConfiguration_fromAssetManager(config, data->android_app_state->activity->assetManager);
 
-  if (data->window == NULL)
-  {
+  if (data->window == NULL){
     Ogre::NameValuePairList opt;
     opt["externalWindowHandle"] = Ogre::StringConverter::toString((int)data->android_app_state->window);
     opt["androidConfig"] = Ogre::StringConverter::toString((int)config);
 
     data->window = Ogre::Root::getSingleton().createRenderWindow("OgreWindow", 0, 0, false, &opt);
+    userapp.setupDisplay(data->window);
     ogre_app_init(data);
-  }
-  else
-  {
+  } else {
     static_cast<Ogre::AndroidEGLWindow*>(data->window)->_createInternalResources(
       data->android_app_state->window, config
       );
@@ -219,30 +89,30 @@ static int app_setup_display(app_user_data* data)
   return 0;
 }
 
-static void app_term_display(app_user_data* data)
-{
+static void app_term_display(app_user_data* data){
+  // to system level
   LOGI("Terminate display");
   static_cast<Ogre::AndroidEGLWindow*>(data->window)->_destroyInternalResources();
 }
 
-static void app_draw_frame(app_user_data* data)
-{
-  if(data->window != NULL && data->window->isActive())
-  {
-    // LOGI("Render frame");
+static void app_draw_frame(app_user_data* data){
+  // to system level #add here a add level (scene)
+  if(data->window != NULL && data->window->isActive()){
+    LOGI("GW Render frame");
     // data->window->windowMovedOrResized();
     data->root->renderOneFrame();
   }
 }
 
 
-static void app_init(app_user_data* data)
-{
-  LOGI("App init");
+static void app_init(app_user_data* data){
+  // to system level #add here an app init
+  LOGI("GW App init");
   if(data->init == true)
     return;
-
   data->root = new Ogre::Root();
+  userapp.appInit(data->root);
+  // data->root = new Ogre::Root::getSingleton();1
 
 #ifdef OGRE_STATIC_LIB
   data->plugin_loader = new Ogre::StaticPluginLoader();
@@ -255,11 +125,11 @@ static void app_init(app_user_data* data)
 
 static void app_shutdown(app_user_data* data)
 {
-  LOGI("App shutdown");
+  // to system level #add here an app shutdown
+  LOGI("GW App shutdown");
   app_term_display(data);
 
-  if (data->init == false)
-  {
+  if (data->init == false){
     return;
   }
 
@@ -279,11 +149,10 @@ static void app_shutdown(app_user_data* data)
 /**
  * Process the next input event.
  */
-static int32_t app_handle_input(android_app */*app*/, AInputEvent *event)
-{
-  LOGI("Input received");
-  if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION)
-  {
+static int32_t app_handle_input(android_app* /*app*/, AInputEvent *event){
+  // to system level
+  LOGI("GW Input received");
+  if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION){
     return 1;
   }
   return 0;
@@ -292,13 +161,11 @@ static int32_t app_handle_input(android_app */*app*/, AInputEvent *event)
 /**
  * Process the next main command.
  */
-static void app_handle_cmd(android_app *app, int32_t cmd)
-{
+static void app_handle_cmd(android_app *app, int32_t cmd){
   app_user_data* data = (app_user_data *) app->userData;
-  switch (cmd)
-  {
+  switch (cmd){
   case APP_CMD_SAVE_STATE:
-    LOGI("Save state command");
+    LOGI("GW Save state command");
     // The system has asked us to save our current state.  Do so.
     app->savedState = malloc(sizeof(saved_state));
     *((saved_state*)app->savedState) = data->state;
@@ -306,23 +173,19 @@ static void app_handle_cmd(android_app *app, int32_t cmd)
     break;
 
   case APP_CMD_INIT_WINDOW:
-    LOGI("Init window command");
+    LOGI("GW Init window command");
     // The window is being shown, get it ready.
-    if (app->window != NULL && data->init == true)
-    {
+    if (app->window != NULL && data->init == true){
       app_setup_display(data);
       app_draw_frame(data);
-    }
-    break;
+    } break;
 
   case APP_CMD_TERM_WINDOW:
-    LOGI("Term window command");
-    if(data->init == true && data->window != NULL)
-    {
+    LOGI("GW Term window command");
+    if(data->init == true && data->window != NULL){
       // The window is being hidden or closed, clean it up.
       app_term_display(data);
-    }
-    break;
+    } break;
 
   case APP_CMD_GAINED_FOCUS:
     data->animating = true;
@@ -333,7 +196,7 @@ static void app_handle_cmd(android_app *app, int32_t cmd)
     break;
 
   default:
-    LOGI("Other command");
+    LOGI("GW Other command");
     break;
   }
 }
@@ -343,11 +206,9 @@ static void app_handle_cmd(android_app *app, int32_t cmd)
  * android_native_app_glue.  It runs in its own thread, with its own
  * event loop for receiving input events and doing other things.
  */
-void android_main(android_app* state)
-{
-  LOGI("Starting app");
+void android_main(android_app* state){
+  LOGI("GW Starting app");
   app_user_data data;
-
   // Make sure glue isn't stripped.
   app_dummy();
 
@@ -361,15 +222,13 @@ void android_main(android_app* state)
   state->onAppCmd = app_handle_cmd;
   state->onInputEvent = app_handle_input;
 
-  if (state->savedState != NULL)
-  {
+  if (state->savedState != NULL){
     // We are starting with a previous saved state; restore from it.
     data.state = *(saved_state*)state->savedState;
   }
 
   // loop waiting for stuff to do.
-  while (1)
-  {
+  while (1){
     // Read all pending events.
     int ident;
     int events;
@@ -379,25 +238,21 @@ void android_main(android_app* state)
     // If not animating, we will block forever waiting for events.
     // If animating, we loop until all events are read, then continue
     // to draw the next frame of animation.
-    while ((ident = ALooper_pollAll(data.animating ? 0 : -1, NULL, &events, (void**)&source)) >= 0)
-    {
+    while ((ident = ALooper_pollAll(data.animating ? 0 : -1, NULL, &events, (void**)&source)) >= 0){
       // Process this event.
-      if (source != NULL)
-      {
+      if (source != NULL){
         source->process(state, source);
       }
 
       // Check if we are exiting.
-      if (state->destroyRequested != 0)
-      {
+      if (state->destroyRequested != 0){
         app_shutdown(&data);
         return;
       }
     }
 
     // LOGI("Drawing frame");
-    if (data.animating == true)
-    {
+    if (data.animating == true){
       app_draw_frame(&data);
     }
   }
