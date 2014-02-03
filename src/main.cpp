@@ -184,8 +184,8 @@ static void ogre_app_init(app_user_data *data)
 
     //Create a light
     Ogre::Light* l = scene_manager->createLight("MainLight");
-    l->setPosition(20,80,50);
-    Ogre::Plane plane(Ogre::Vector3(0,0,1), Ogre::Vector3(1,0,0), Ogre::Vector3(0,1,0));
+    l->setPosition(2,80,50);
+    Ogre::Plane plane(Ogre::Vector3(10,0,1), Ogre::Vector3(1,0,0), Ogre::Vector3(0,1,0));
     Ogre::MeshManager::getSingleton().createPlane("ground",
                                                 Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
                                                 plane, 15, 15, 20, 20, true,
