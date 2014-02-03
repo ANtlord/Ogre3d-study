@@ -2,3 +2,5 @@
 android/obj
 android/bin
 android/libs/
+android/AndroidManifest.xml
+android/jni/Android.mk
