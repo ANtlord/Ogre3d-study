@@ -53,7 +53,6 @@
 #endif
 
 #include "gwApp.h"
-GW::gwApp	userapp;
 /**
  * Our saved state data.
  */

@@ -14,7 +14,16 @@ public:
 	void	appClose();
 	void 	createScene();
 	void 	setupDisplay(Ogre::RenderWindow *window);
+	inline static gwApp*	getSingleton(){
+		return ( _self ) ? _self : _self = new gwApp();
+	}
+	inline Ogre::SceneManager* getSceneManager(){
+		return scene_manager;
+	}
 private:
+	gwApp();
+	Ogre::SceneManager *scene_manager;
+	static gwApp*	_self;
 	Ogre::Root *_root;
 	Ogre::RenderWindow *_window;
 };
