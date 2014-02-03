@@ -13,11 +13,15 @@ print "OGRE_ROOT=",os.environ['OGRE_ROOT']
 print "ANDROID_NDK=",os.environ['ANDROID_NDK']
 print "LOCAL_PATH",os.environ['LOCAL_PATH']
 
+projn = os.environ['PROJECT_NAME']
 ogrt = os.environ['OGRE_ROOT']
 andn = os.environ['ANDROID_NDK']
 andb = os.environ['ANDROID_BUILD']
 arme = os.environ['ARMEABI']
 pwdpath = os.environ['LOCAL_PATH']
+arch = os.environ['ARCH']
+apil = os.environ['API_LEVEL']
+projo = os.environ['PROJECT_PACKAGE']
 
 mkin = open("android/jni/Android.mk.in","r")
 mkind = mkin.read()
@@ -28,15 +32,26 @@ mkind = mkind.replace("@LOCAL_PATH",pwdpath)
 mkind = mkind.replace("@ANDROID_BUILD",andb)
 mkind = mkind.replace("@ARMEABI",arme)
 mkind = mkind.replace("@SRC",aggstr)
+mkind = mkind.replace("@PROJECT_NAME",projn)
+mkind = mkind.replace("@PROJECT_PACKAGE",projo)
 
 mk = open("android/jni/Android.mk","w")
 mk.write(mkind)
 
-#android update project -t 1 -p . -s
-#ndk-build
-#ant debug install
-#longbuildcommand = "cd android ; android update project -t 1 -p . -s ; ndk-build ; ant debug install ; cd - ;"
+appin = open("android/AndroidManifest.xml.in","r")
+appind = appin.read()
+appind = appind.replace("@PROJECT_NAME",projn)
+appind = appind.replace("@PROJECT_PACKAGE",projo)
+
+appio = open("android/AndroidManifest.xml","w")
+appio.write(appind)
+
 print 'Change directory=',check_call("cd android", shell=True)
 print 'Update android project=',check_call("cd android; android update project -t 1 -p . -s", shell=True)
 #print 'NDK-build=',check_call("cd android; ndk-build",shell=True)
 #print 'Ant install=',check_call("cd android; ant debug install",shell=True)
+
+#Generate CMakeLists.txt 
+cmakel = open("CMakeLists.txt","w")
+cmakel.write("project("+projn+")\n")
+cmakel.write("add_executable(par "+aggstr+")\n")

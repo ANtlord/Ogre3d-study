@@ -1,6 +1,6 @@
 LOCAL_PATH := $(call my-dir)
     include $(CLEAR_VARS)
-    LOCAL_MODULE    := ForumOgreProject
+    LOCAL_MODULE    := @PROJECT_NAME
 
     LOCAL_LDLIBS	:= -landroid -lc -lm -ldl -llog -lEGL -lGLESv2
     LOCAL_LDLIBS	+= -L@OGRE_ROOT/@ANDROID_BUILD/lib \
