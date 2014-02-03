@@ -1,13 +1,19 @@
 #!/usr/bin/python
 import os
 from subprocess import call,check_output,check_call
-srcs = check_output("ls ./src",shell=True)
-srcss = srcs.split("\n");
-aggstr = ""
-for src in srcss:
-	if src!="":
-		aggstr+=" src/"+src
-print aggstr	
+
+def ComposeFiles2Str(dirname):
+	srcs = check_output("ls ./"+dirname,shell=True)
+	srcss = srcs.split("\n")
+	aggstr = ""
+	for src in srcss:
+        	if src!="":
+                	aggstr+=" "+dirname+"/"+src
+	return aggstr
+
+aggstr = ComposeFiles2Str("src")
+aggstr2 = ComposeFiles2Str("include")
+	
 print "PREPARE FOR BUILDING..."
 print "OGRE_ROOT=",os.environ['OGRE_ROOT']
 print "ANDROID_NDK=",os.environ['ANDROID_NDK']
@@ -53,5 +59,19 @@ print 'Update android project=',check_call("cd android; android update project -
 
 #Generate CMakeLists.txt 
 cmakel = open("CMakeLists.txt","w")
+cmakel.write("cmake_minimum_required(VERSION 2.8)\n")
 cmakel.write("project("+projn+")\n")
-cmakel.write("add_executable(par "+aggstr+")\n")
+cmakel.write("add_executable(par "+aggstr+" "+aggstr2+")\n")
+
+#Compose include for android-ndk
+incs = "include_directories("+andn+"/platforms/android-"+apil+"/arch-"+arch+"/usr/include)\n"
+incs2 = "include_directories("+ogrt+"/OgreMain/include )\n"
+incs3 = "include_directories("+pwdpath+"/include )\n"
+incs4 = "include_directories("+andn+"/sources/android/native_app_glue/ )\n"
+cmakel.write(incs)
+cmakel.write(incs2)
+cmakel.write(incs3)
+cmakel.write(incs4)
+
+for comp in ["RTShaderSystem","Overlay","Property"]:
+	cmakel.write("include_directories("+ogrt+"/Components/"+comp+"/include )\n")
