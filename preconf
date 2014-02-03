@@ -1,5 +1,4 @@
-#!/usr/bin/python
-#dadasdsdadsdopp
+#!/usr/bin/python2
 import os
 from subprocess import call,check_output,check_call
 
