@@ -1,4 +1,15 @@
 #!/bin/bash
 cd android
 ndk-build
-ant debug install
+if [ $# -ne 0 ]
+then   
+	echo "Build script running with arguments.../n Processing..."
+    	if [ $1 == "debug_install" ]
+	then
+		ant debug install
+	fi
+    	if [ $1 == "release_install" ]
+	then
+		ant release install
+	fi
+fi
