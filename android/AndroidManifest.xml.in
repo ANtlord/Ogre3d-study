@@ -15,7 +15,8 @@
                   android:label="@PROJECT_NAME"
                   android:configChanges="orientation|screenSize|keyboardHidden"
 		   android:debuggable="true"
-		  android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
+		android:screenOrientation="landscape"  
+		android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
             <!-- Tell NativeActivity the name of or .so -->
             <meta-data android:name="android.app.lib_name" android:value="@PROJECT_NAME" />
             <intent-filter>
