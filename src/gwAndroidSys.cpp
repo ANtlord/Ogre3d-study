@@ -58,14 +58,14 @@ static void ogre_app_init(app_user_data *data){
 
     Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
     /********************************* Create Scene ****************************/
-  GW::gwApp::getSingleton()->createScene();
+  GW::App::getSingleton()->createScene();
   #ifdef INCLUDE_RTSHADER_SYSTEM
     Ogre::RTShader::ShaderGenerator::initialize();
     // The Shader generator instance
     Ogre::RTShader::ShaderGenerator* gen = Ogre::RTShader::ShaderGenerator::getSingletonPtr();
     ShaderGeneratorTechniqueResolverListener * material_mgr_listener = new ShaderGeneratorTechniqueResolverListener(gen);
     Ogre::MaterialManager::getSingleton().addListener(material_mgr_listener);
-    gen->addSceneManager(GW::gwApp::getSingleton()->getSceneManager());
+    gen->addSceneManager(GW::App::getSingleton()->getSceneManager());
 #endif
 }
 
@@ -83,7 +83,7 @@ static int app_setup_display(app_user_data* data){
     opt["androidConfig"] = Ogre::StringConverter::toString((int)config);
 
     data->window = Ogre::Root::getSingleton().createRenderWindow("OgreWindow", 0, 0, false, &opt);
-    GW::gwApp::getSingleton()->setupDisplay(data->window);
+    GW::App::getSingleton()->setupDisplay(data->window);
     ogre_app_init(data);
   } else {
     static_cast<Ogre::AndroidEGLWindow*>(data->window)->_createInternalResources(
@@ -107,7 +107,8 @@ static void app_draw_frame(app_user_data* data){
   if(data->window != NULL && data->window->isActive()){
 //    LOGI("GW Render frame");
     // data->window->windowMovedOrResized();
-    data->root->renderOneFrame();
+    GW::App::getSingleton()->render();
+//      data->root->renderOneFrame();
   }
 }
 
@@ -118,7 +119,7 @@ static void app_init(app_user_data* data){
   if(data->init == true)
     return;
   data->root = new Ogre::Root();
-  GW::gwApp::getSingleton()->appInit(data->root);
+  GW::App::getSingleton()->appInit(data->root);
   // data->root = new Ogre::Root::getSingleton();1
 
 #ifdef OGRE_STATIC_LIB

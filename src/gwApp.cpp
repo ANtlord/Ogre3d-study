@@ -2,21 +2,21 @@
 #include <OgreSceneNode.h>
 #include <OgreEntity.h>
 namespace GW{
-gwApp*   gwApp::_self = NULL;
-gwApp::gwApp(){
+App*   App::_self = NULL;
+App::App(){
 
 }
-void	gwApp::appInit 		(Ogre::Root *root){
+void App::appInit 		(Ogre::Root *root){
 	_root = root;
 }
-void	gwApp::appClose		(){
+void App::appClose		(){
 
 }
-void 	gwApp::createScene	(){
-	scene_manager = Ogre::Root::getSingleton().createSceneManager("DefaultSceneManager");
+void App::createScene	(){
+    _scene_manager = Ogre::Root::getSingleton().createSceneManager("DefaultSceneManager");
 
     // Create the camera
-    Ogre::Camera *camera = scene_manager->createCamera("PlayerCam");
+    Ogre::Camera *camera = _scene_manager->createCamera("PlayerCam");
 
     // Look back along -Z
     camera->setPosition(Ogre::Vector3(0,0,100));
@@ -31,18 +31,21 @@ void 	gwApp::createScene	(){
     camera->setAspectRatio(Ogre::Real(vp->getActualWidth()) / Ogre::Real(vp->getActualHeight()));
 
     //Set ambient light
-    scene_manager->setAmbientLight(Ogre::ColourValue(0.2, 0.2, 0.2));
+//    _scene_manager->setAmbientLight(Ogre::ColourValue(0.2, 0.2, 0.2));
     //add a ogrehead to scene
 
-	Ogre::Entity* ogreHead = scene_manager->createEntity("Head", "ogrehead.mesh");
-	Ogre::SceneNode* headNode = scene_manager->getRootSceneNode()->createChildSceneNode();
+    Ogre::Entity* ogreHead = _scene_manager->createEntity("Head", "ogrehead.mesh");
+    Ogre::SceneNode* headNode = _scene_manager->getRootSceneNode()->createChildSceneNode();
 	headNode->attachObject(ogreHead);
     
     //Create a light
-    Ogre::Light* l = scene_manager->createLight("MainLight");
+    Ogre::Light* l = _scene_manager->createLight("MainLight");
     l->setPosition(20,80,50);
 }
-void 	gwApp::setupDisplay(Ogre::RenderWindow *window){
+void App::setupDisplay(Ogre::RenderWindow *window){
 	_window = window;
+}
+void App::render(){
+    _root->renderOneFrame();
 }
 }

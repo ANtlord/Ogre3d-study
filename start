@@ -1,0 +1,2 @@
+#!/bin/bash
+adb shell am start -n $(cat android/AndroidManifest.xml | grep "package=" | tr "\"" "\n" | head -2 | tail -1)/$(cat android/AndroidManifest.xml | grep "activity android:name=" | tr "\"" "\n" | head -2 | tail -1)

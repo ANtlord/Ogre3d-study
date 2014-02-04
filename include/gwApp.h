@@ -8,22 +8,23 @@
 #include "OgreRoot.h"
 #include "OgreRenderWindow.h"
 namespace GW{
-class gwApp{
+class App{
 public:
-	void	appInit(Ogre::Root *root);
-	void	appClose();
-	void 	createScene();
-	void 	setupDisplay(Ogre::RenderWindow *window);
-	inline static gwApp*	getSingleton(){
-		return ( _self ) ? _self : _self = new gwApp();
+    void appInit(Ogre::Root *root);
+    void appClose();
+    void createScene();
+    void setupDisplay(Ogre::RenderWindow *window);
+    void render();
+    inline static App*	getSingleton(){
+        return ( _self ) ? _self : _self = new App();
 	}
 	inline Ogre::SceneManager* getSceneManager(){
-		return scene_manager;
+        return _scene_manager;
 	}
 private:
-	gwApp();
-	Ogre::SceneManager *scene_manager;
-	static gwApp*	_self;
+    App();
+    Ogre::SceneManager* _scene_manager;
+    static App*	_self;
 	Ogre::Root *_root;
 	Ogre::RenderWindow *_window;
 };
