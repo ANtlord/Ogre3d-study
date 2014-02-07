@@ -13,26 +13,15 @@ void App::appClose		(){
 
 }
 void App::createScene	(){
-    _scene_manager = Ogre::Root::getSingleton().createSceneManager("DefaultSceneManager");
-
-    // Create the camera
-    Ogre::Camera *camera = _scene_manager->createCamera("PlayerCam");
+    GameState* state = _states.createState("first");
+    Ogre::SceneManager* _scene_manager = state->getScene();
+    Ogre::Camera *camera = _scene_manager->createCamera(MainCameraName);
 
     // Look back along -Z
     camera->setPosition(Ogre::Vector3(0,0,100));
     camera->lookAt(Ogre::Vector3(0,0,-100));
     camera->setNearClipDistance(5);
     camera->setFarClipDistance(5000);
-
-    // Create one viewport, entire window
-    Ogre::Viewport* vp = _window->addViewport(camera);
-    vp->setBackgroundColour(Ogre::ColourValue(0.5,0.5,0.5));
-    // Alter the camera aspect ratio to match the viewport
-    camera->setAspectRatio(Ogre::Real(vp->getActualWidth()) / Ogre::Real(vp->getActualHeight()));
-
-    //Set ambient light
-//    _scene_manager->setAmbientLight(Ogre::ColourValue(0.2, 0.2, 0.2));
-    //add a ogrehead to scene
 
     Ogre::Entity* ogreHead = _scene_manager->createEntity("Head", "ogrehead.mesh");
     Ogre::SceneNode* headNode = _scene_manager->getRootSceneNode()->createChildSceneNode();

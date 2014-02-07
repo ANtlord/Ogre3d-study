@@ -7,6 +7,9 @@
 #include "OgreMaterialManager.h"
 #include "OgreRoot.h"
 #include "OgreRenderWindow.h"
+#include <map>
+#include "gwGameStateManager.h"
+
 namespace GW{
 class App{
 public:
@@ -16,17 +19,18 @@ public:
     void setupDisplay(Ogre::RenderWindow *window);
     void render();
     inline static App*	getSingleton(){
-        return ( _self ) ? _self : _self = new App();
+        return ( _self ) ? _self : _self = new App;
 	}
-	inline Ogre::SceneManager* getSceneManager(){
-        return _scene_manager;
-	}
+//	inline Ogre::SceneManager* getSceneManager( ){
+//        return _scene_manager;
+//	}
 private:
     App();
-    Ogre::SceneManager* _scene_manager;
+//    Ogre::SceneManager* _scene_manager;
     static App*	_self;
 	Ogre::Root *_root;
 	Ogre::RenderWindow *_window;
+    StateManager _states;
 };
 
 }
