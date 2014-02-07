@@ -7,6 +7,7 @@
 #include <android_native_app_glue.h>
 #include <EGL/egl.h>
 
+
 #include "OgreFileSystemLayer.h"
 #define _OgreSampleExport
 #define _OgreSampleClassExport
@@ -25,14 +26,9 @@
 #define RTSHADER_SYSTEM_BUILD_CORE_SHADERS
 #define RTSHADER_SYSTEM_BUILD_EXT_SHADERS
 
-//#ifdef OGRE_STATIC_LIB
-// #   ifdef OGRE_BUILD_PLUGIN_BSP
-// #       include "BSP.h"
-// #   endif
 #ifdef INCLUDE_RTSHADER_SYSTEM
 #  include "ShaderSystem.h"
 #endif
-//#endif
 
 #include <OgreShaderGenerator.h>
 
