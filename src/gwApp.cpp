@@ -1,6 +1,7 @@
 #include "gwApp.h"
 #include <OgreSceneNode.h>
 #include <OgreEntity.h>
+#include <OgreCamera.h>
 namespace GW{
 gwApp*   gwApp::_self = NULL;
 gwApp::gwApp(){

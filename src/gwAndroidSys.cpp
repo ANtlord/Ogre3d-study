@@ -1,5 +1,10 @@
 #include "gwAndroidSys.h"
 
+enum Button {
+    ButtonTapGesture,
+    ButtonPinching,
+    ButtonPinchScale
+};
 
 // to system level #preinit resources
 static Ogre::DataStreamPtr openAPKFile(AAssetManager* asset_manager, const Ogre::String& fileName){
@@ -156,13 +161,22 @@ static void app_shutdown(app_user_data* data)
 /**
  * Process the next input event.
  */
-static int32_t app_handle_input(android_app* /*app*/, AInputEvent *event){
+static int32_t app_handle_input(android_app* app, AInputEvent *event){
   // to system level
-  LOGI("GW Input received");
-  if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION){
-    return 1;
-  }
-  return 0;
+  //LOGI("GW Input received");
+  //if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION){
+    //return 1;
+  //}
+  //return 0;
+	// Forward input events to Gainput
+	gainput::InputManager* inputManager = (gainput::InputManager*)app->userData;
+	static bool resSet = false;
+	if (!resSet)
+	{
+		inputManager->SetDisplaySize(ANativeWindow_getWidth(app->window), ANativeWindow_getHeight(app->window));
+		resSet = true;
+	}
+	return inputManager->HandleInput(event);
 }
 
 /**
@@ -215,11 +229,36 @@ static void app_handle_cmd(android_app *app, int32_t cmd){
  */
 void android_main(android_app* state){
   LOGI("GW Starting app");
-  app_user_data data;
   // Make sure glue isn't stripped.
   app_dummy();
+  app_user_data data;
 
-  memset(&data, 0, sizeof(data));
+
+    gainput::InputDeviceTouch* touchDevice = data.CreateAndGetDevice<gainput::InputDeviceTouch>();
+    GAINPUT_ASSERT(touchDevice);
+    gainput::DeviceId touchId = touchDevice->GetDeviceId();
+
+	gainput::InputMap map(data, "testmap");
+
+	gainput::TapGesture* tg = data.CreateAndGetDevice<gainput::TapGesture>();
+	GAINPUT_ASSERT(tg);
+	tg->Initialize(touchId, gainput::Touch0Down,
+			500);
+	map.MapBool(ButtonTapGesture, tg->GetDeviceId(), gainput::TapTriggered);
+
+	gainput::PinchGesture* pg = data.CreateAndGetDevice<gainput::PinchGesture>();
+	GAINPUT_ASSERT(pg);
+	pg->Initialize(touchId, gainput::Touch0Down,
+			touchId, gainput::Touch0X,
+			touchId, gainput::Touch0Y,
+			touchId, gainput::Touch1Down,
+			touchId, gainput::Touch1X,
+			touchId, gainput::Touch1Y);
+	map.MapBool(ButtonPinching, pg->GetDeviceId(), gainput::PinchTriggered);
+	map.MapFloat(ButtonPinchScale, pg->GetDeviceId(), gainput::PinchScale);
+
+  data.root = NULL;
+  data.window = NULL;
   data.android_app_state = state;
   data.init = false;
   data.animating = false;
@@ -239,12 +278,24 @@ void android_main(android_app* state){
     // Read all pending events.
     int ident;
     int events;
+    data.Update();
     android_poll_source* source;
 
     // LOGI("Polling events");
     // If not animating, we will block forever waiting for events.
     // If animating, we loop until all events are read, then continue
     // to draw the next frame of animation.
+
+
+
+		if (map.GetBool(ButtonPinching))
+		{
+			LOGI("PINCH 123");
+		}
+		if (map.GetBoolWasDown(ButtonTapGesture))
+		{
+			LOGI("PINCH");
+		}
     while ((ident = ALooper_pollAll(data.animating ? 0 : -1, NULL, &events, (void**)&source)) >= 0){
       // Process this event.
       if (source != NULL){

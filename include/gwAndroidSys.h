@@ -2,6 +2,7 @@
 #define			__GW_ANDROID_SYS_H__
 
 
+#include <gainput/gainput.h>
 #include <android/log.h>
 #include <android_native_app_glue.h>
 #include <EGL/egl.h>
@@ -62,19 +63,21 @@ struct saved_state{
 /**
  * Shared state for our app.
  */
-struct app_user_data{
-  android_app *android_app_state;
+class app_user_data : public gainput::InputManager
+{
+    public:
+        android_app *android_app_state;
 
-  bool init;
-  bool animating;
+        bool init;
+        bool animating;
 
-  Ogre::RenderWindow *window;
-  Ogre::Root *root;
+        Ogre::RenderWindow *window;
+        Ogre::Root *root;
 
-  saved_state state;
+        saved_state state;
 
 #ifdef OGRE_STATIC_LIB
-  Ogre::StaticPluginLoader *plugin_loader;
+        Ogre::StaticPluginLoader *plugin_loader;
 #endif
 };
 
