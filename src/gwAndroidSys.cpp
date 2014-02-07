@@ -65,7 +65,7 @@ static void ogre_app_init(app_user_data *data){
     Ogre::RTShader::ShaderGenerator* gen = Ogre::RTShader::ShaderGenerator::getSingletonPtr();
     ShaderGeneratorTechniqueResolverListener * material_mgr_listener = new ShaderGeneratorTechniqueResolverListener(gen);
     Ogre::MaterialManager::getSingleton().addListener(material_mgr_listener);
-    gen->addSceneManager(GW::App::getSingleton()->getSceneManager());
+    gen->addSceneManager(GW::App::getSingleton()->getStateManager()->getCurrState()->getScene());
 #endif
 }
 

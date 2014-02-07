@@ -23,9 +23,9 @@ public:
         return _controller;
     };
 
-    virtual void enter() = 0;
-    virtual void exit() = 0;
-    virtual void update(double timeSinceLastFrame) = 0;
+//    virtual void enter() = 0;
+//    virtual void exit() = 0;
+//    virtual void update(double timeSinceLastFrame) = 0;
 private:
     Control* _controller;
     Ogre::SceneManager* _scene_manager;

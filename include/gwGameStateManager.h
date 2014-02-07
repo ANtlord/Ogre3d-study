@@ -15,9 +15,9 @@ public:
     ~StateManager( );
     GameState*          createState     ( const std::string& state_name );
     GameState*          changeState     ( const std::string& state_name, Ogre::RenderWindow* window );
-    const std::string&  getPrevState    ( );
+    GameState*          getCurrState    ( );
     GameState*          getPrevState    ( );
 };
 }
 
-#endif			_GW_GAME_STATE_MANAGER_H__
+#endif			//_GW_GAME_STATE_MANAGER_H__

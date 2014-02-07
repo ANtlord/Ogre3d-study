@@ -21,9 +21,9 @@ public:
     inline static App*	getSingleton(){
         return ( _self ) ? _self : _self = new App;
 	}
-//	inline Ogre::SceneManager* getSceneManager( ){
-//        return _scene_manager;
-//	}
+    inline StateManager* getStateManager( ){
+        return &_states;
+    }
 private:
     App();
 //    Ogre::SceneManager* _scene_manager;

@@ -16,6 +16,7 @@ void App::createScene	(){
     GameState* state = _states.createState("first");
     Ogre::SceneManager* _scene_manager = state->getScene();
     Ogre::Camera *camera = _scene_manager->createCamera(MainCameraName);
+    _states.changeState("first",_window);
 
     // Look back along -Z
     camera->setPosition(Ogre::Vector3(0,0,100));
