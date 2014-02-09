@@ -4,3 +4,6 @@ android/bin
 android/libs/
 android/AndroidManifest.xml
 android/jni/Android.mk
+CMakeLists.txt
+envvars
+android/local.properties
