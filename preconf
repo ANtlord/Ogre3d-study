@@ -18,6 +18,7 @@ print "PREPARE FOR BUILDING..."
 print "OGRE_ROOT=",os.environ['OGRE_ROOT']
 print "ANDROID_NDK=",os.environ['ANDROID_NDK']
 print "LOCAL_PATH",os.environ['LOCAL_PATH']
+print "GAINPUT_PATH",os.environ['GAINPUT_PATH']
 
 projn = os.environ['PROJECT_NAME']
 ogrt = os.environ['OGRE_ROOT']
@@ -28,6 +29,7 @@ pwdpath = os.environ['LOCAL_PATH']
 arch = os.environ['ARCH']
 apil = os.environ['API_LEVEL']
 projo = os.environ['PROJECT_PACKAGE']
+gainput = os.environ['GAINPUT_PATH']
 
 mkin = open("android/jni/Android.mk.in","r")
 mkind = mkin.read()
@@ -40,6 +42,7 @@ mkind = mkind.replace("@ARMEABI",arme)
 mkind = mkind.replace("@SRC",aggstr)
 mkind = mkind.replace("@PROJECT_NAME",projn)
 mkind = mkind.replace("@PROJECT_PACKAGE",projo)
+mkind = mkind.replace("@GAINPUT_PATH",gainput)
 
 mk = open("android/jni/Android.mk","w")
 mk.write(mkind)

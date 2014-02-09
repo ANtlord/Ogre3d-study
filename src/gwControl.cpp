@@ -1,5 +1,26 @@
 #include "gwControl.h"
 namespace GW{
-void Control::onetap (const int x, const int y){}
-void Control::tapmoving (...){}
+
+// InputListener.
+void Control::tapReleased(const TapEvent &e)
+{
+
+}
+
+void Control::tapHolded()
+{
+
+}
+
+void Control::pinchDown()
+{
+
+}
+
+void Control::rotateDown()
+{
+
+}
+
+// end InputListener.
 }

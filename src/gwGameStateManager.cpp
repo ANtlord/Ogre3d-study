@@ -1,5 +1,6 @@
 #include "gwGameStateManager.h"
 #include <stddef.h>
+#include <OgreCamera.h>
 namespace GW{
 StateManager::StateManager ( ){
     _current_state  = NULL;
