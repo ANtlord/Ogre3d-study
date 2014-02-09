@@ -1,5 +1,6 @@
 #include "gwAndroidSys.h"
 #include <gainput/gainput.h>
+#include "../include/gwInputListener.h"
 
 
 /**
@@ -17,6 +18,7 @@ enum Button
     ButtonPinchScale,
     ButtonRotating,
     ButtonRotateAngle,
+	MouseX,
 };
 
 // to system level #preinit resources
@@ -177,7 +179,7 @@ static void app_shutdown(app_user_data* data)
  */
 static int32_t app_handle_input(android_app* app, AInputEvent *event)
 {
-    gainput::InputManager* inputManager = (gainput::InputManager*)app->userData;
+    app_user_data* inputManager = (app_user_data*)app->userData;
     static bool resSet = false;
     if (!resSet)
     {
@@ -254,8 +256,7 @@ void android_main(android_app* state)
     // Just tap.
     gainput::TapGesture* tg = data.CreateAndGetDevice<gainput::TapGesture>();
     GAINPUT_ASSERT(tg);
-    tg->Initialize(touchId, gainput::Touch0Down,
-            500);
+    tg->Initialize(touchId, gainput::Touch0Down, 500);
     map.MapBool(ButtonTapGesture, tg->GetDeviceId(), gainput::TapTriggered);
 
     // Pinch.
@@ -319,19 +320,20 @@ void android_main(android_app* state)
         // If not animating, we will block forever waiting for events.
         // If animating, we loop until all events are read, then continue
         // to draw the next frame of animation.
-
         if (map.GetBool(ButtonPinching)) {
             float delta = map.GetFloat(ButtonPinchScale);
             if (delta != 1.)    // Calculated by rate.
                 LOGI("GW_INPUT PINCH %f", delta);
         }
         if (map.GetBool(ButtonRotating)) {
-            unsigned float angle = map.GetFloat(ButtonRotateAngle);
+            float angle = map.GetFloat(ButtonRotateAngle);
             if ( angle > 0. )   // Calculated by radians and every time is positive.
                 LOGI("GW_INPUT ROTATION %f", angle);
         }
         if (map.GetBoolWasDown(ButtonTapGesture)) {
-            LOGI("GW_INPUT TAP");
+            LOGI( "GW_INPUT TAP: %f;", AMotionEvent_getX(data.getEvent(), 0) );
+            LOGI( "GW_INPUT TAP: %f;", AMotionEvent_getX(data.getEvent(), 0) );
+
         }
         if (map.GetBool(ButtonHoldGesture)) {
             LOGI("GW_INPUT HOLDING");
@@ -350,7 +352,6 @@ void android_main(android_app* state)
             }
         }
 
-        // LOGI("Drawing frame");
         if (data.animating == true) {
             app_draw_frame(&data);
         }

@@ -72,10 +72,27 @@ class app_user_data : public gainput::InputManager
 
         saved_state state;
 
+        int32_t HandleInput(AInputEvent *event);
+        AInputEvent * getEvent();
+
 #ifdef OGRE_STATIC_LIB
         Ogre::StaticPluginLoader *plugin_loader;
 #endif
+    private:
+        static AInputEvent * _event;
 };
 
+AInputEvent * app_user_data::_event = NULL;
+
+int32_t app_user_data::HandleInput(AInputEvent *event)
+{
+    app_user_data::_event = event;
+    return gainput::InputManager::HandleInput(event);
+}
+
+AInputEvent * app_user_data::getEvent()
+{
+    return app_user_data::_event;
+}
 
 #endif 			//__GW_ANDROID_SYS_H__
