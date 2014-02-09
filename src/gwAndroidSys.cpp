@@ -1,6 +1,5 @@
 #include "gwAndroidSys.h"
 #include <gainput/gainput.h>
-#include "../include/gwInputListener.h"
 
 
 /**
@@ -18,7 +17,6 @@ enum Button
     ButtonPinchScale,
     ButtonRotating,
     ButtonRotateAngle,
-	MouseX,
 };
 
 // to system level #preinit resources
@@ -135,21 +133,21 @@ static void app_draw_frame(app_user_data* data){
 
 
 static void app_init(app_user_data* data){
-  // to system level #add here an app init
-  LOGI("GW App init");
-  if(data->init == true)
-    return;
-  data->root = new Ogre::Root();
-  GW::App::getSingleton()->appInit(data->root);
-  // data->root = new Ogre::Root::getSingleton();1
+    // to system level #add here an app init
+    LOGI("GW App init");
+    if(data->init == true)
+        return;
+    data->root = new Ogre::Root();
+    GW::App::getSingleton()->appInit(data->root);
+    // data->root = new Ogre::Root::getSingleton();1
 
 #ifdef OGRE_STATIC_LIB
-  data->plugin_loader = new Ogre::StaticPluginLoader();
-  data->plugin_loader->load();
+    data->plugin_loader = new Ogre::StaticPluginLoader();
+    data->plugin_loader->load();
 #endif
-  data->root->setRenderSystem(data->root->getAvailableRenderers().at(0));
-  data->root->initialise(false);
-  data->init = true;
+    data->root->setRenderSystem(data->root->getAvailableRenderers().at(0));
+    data->root->initialise(false);
+    data->init = true;
 }
 
 static void app_shutdown(app_user_data* data)
@@ -321,25 +319,45 @@ void android_main(android_app* state)
         // If not animating, we will block forever waiting for events.
         // If animating, we loop until all events are read, then continue
         // to draw the next frame of animation.
-        if (map.GetBool(ButtonPinching)) {
-            float delta = map.GetFloat(ButtonPinchScale);
-            if (delta != 1.)    // Calculated by rate.
-                LOGI("GW_INPUT PINCH %f", delta);
-        }
-        if (map.GetBool(ButtonRotating)) {
-            float angle = map.GetFloat(ButtonRotateAngle);
-            if ( angle > 0. )   // Calculated by radians and every time is positive.
-                LOGI("GW_INPUT ROTATION %f", angle);
-        }
-        if (map.GetBoolWasDown(ButtonTapGesture)) {
-            LOGI( "GW_INPUT TAP: %f;", AMotionEvent_getX(data.getEvent(), 0) );
-            LOGI( "GW_INPUT TAP: %f;", AMotionEvent_getX(data.getEvent(), 0) );
 
-        }
-        if (map.GetBool(ButtonHoldGesture)) {
-            LOGI("GW_INPUT HOLDING");
-        }
+        // Handling input events.
+        bool isPinch = map.GetBool(ButtonPinching);
+        bool isRotate = map.GetBool(ButtonRotating);
+        bool isTap = map.GetBoolWasDown(ButtonTapGesture);
+        bool isHold = map.GetBool(ButtonHoldGesture);
+        if (isPinch || isRotate || isTap || isHold) {
+            GW::Control * control = GW::App::getSingleton()->getStateManager()->getCurrState()->getController();
+            if (isPinch == true) {
+                float delta = map.GetFloat(ButtonPinchScale);
+                if (delta != 1.) {   // Calculated by rate.
+                    LOGI("GW_INPUT PINCH %f", delta);
+                    GW::PinchEvent e(delta);
+                    (control != NULL) ? control->pinchDown(e) : LOGI("GW_INPUT TAP: control is null");
+                }
+            }
+            if (isRotate == true) {
+                float angle = map.GetFloat(ButtonRotateAngle);
+                if ( angle > 0. ) {   // Calculated by radians and every time is positive.
+                    LOGI("GW_INPUT ROTATION %f", angle);
+                    GW::RotateEvent e(angle);
+                    (control != NULL) ?  control->rotateDown(e) : LOGI("GW_INPUT TAP: control is null");
+                }
+            }
 
+            if (isTap == true) {
+                float x = AMotionEvent_getX(data.getEvent(), 0);
+                float y = AMotionEvent_getY(data.getEvent(), 0);
+                GW::TapEvent e(x, y);
+                (control != NULL) ?  control->tapReleased(e) : LOGI("GW_INPUT TAP: control is null");
+
+                LOGI("GW_INPUT TAP: %f;", x);
+                LOGI("GW_INPUT TAP: %f;", y);
+            }
+
+            if (isHold == true) {
+                GW::App::getSingleton()->getStateManager()->getCurrState()->getController()->tapHolded();
+            }
+        }
         while ((ident = ALooper_pollAll(data.animating ? 0 : -1, NULL, &events, (void**)&source)) >= 0){
             // Process this event.
             if (source != NULL){

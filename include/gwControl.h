@@ -7,8 +7,8 @@ public:
     // InputListener.
     virtual void tapReleased(const TapEvent &e);
     virtual void tapHolded();
-    virtual void pinchDown();
-    virtual void rotateDown();
+    virtual void pinchDown(const PinchEvent &e);
+    virtual void rotateDown(const RotateEvent &e);
 
 private:
 
@@ -16,4 +16,4 @@ private:
 }
 
 
-#endif		//_GW_CONTROL_H__
+#endif		//_GW_CONTROL_H__ {}
