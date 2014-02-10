@@ -11,28 +11,41 @@
 #include "gwGameStateManager.h"
 
 namespace GW{
+
+#define GW_IMPLEMENT_APP(appname) \
+appname* getApp() { return static_cast<appname*>(appname::getSingleton()); }
+
+#define GW_DECLARE_APP(appname) \
+    extern appname* getApp()
+
 class App{
 public:
-    void appInit(Ogre::Root *root);
-    void appClose();
-    void createScene();
-    void setupDisplay(Ogre::RenderWindow *window);
-    void render();
+    virtual void appInit(Ogre::Root *root);
+    virtual void appClose();
+    virtual void createScene();
+    virtual void setupDisplay(Ogre::RenderWindow *window);
+    virtual void render();
     inline static App*	getSingleton(){
-        return ( _self ) ? _self : _self = new App;
-	}
+        if (_self) return reinterpret_cast<App*>(_self);
+        else {
+            _self = new char[sizeof(App)];
+            new (_self) App();
+            return reinterpret_cast<App*>(_self);
+        }
+    }
     inline StateManager* getStateManager( ){
         return &_states;
     }
-private:
+protected:
     App();
 //    Ogre::SceneManager* _scene_manager;
-    static App*	_self;
+    static void*_self;
 	Ogre::Root *_root;
 	Ogre::RenderWindow *_window;
     StateManager _states;
 };
 
+//GW_IMPLEMENT_APP(App);
 }
 
 #endif		//__GW_APP_H__

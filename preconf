@@ -71,10 +71,12 @@ incs = "include_directories("+andn+"/platforms/android-"+apil+"/arch-"+arch+"/us
 incs2 = "include_directories("+ogrt+"/OgreMain/include )\n"
 incs3 = "include_directories("+pwdpath+"/include )\n"
 incs4 = "include_directories("+andn+"/sources/android/native_app_glue/ )\n"
+incs5 = "include_directories("+gainput+"/lib/include/ )\n"
 cmakel.write(incs)
 cmakel.write(incs2)
 cmakel.write(incs3)
 cmakel.write(incs4)
+cmakel.write(incs5)
 
 for comp in ["RTShaderSystem","Overlay","Property"]:
 	cmakel.write("include_directories("+ogrt+"/Components/"+comp+"/include )\n")

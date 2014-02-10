@@ -50,6 +50,9 @@
 #endif
 
 #include "gwApp.h"
+
+GW_DECLARE_APP(GW::App);
+
 /**
  * Our saved state data.
  */

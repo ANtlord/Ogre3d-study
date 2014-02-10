@@ -3,7 +3,7 @@
 #include <OgreEntity.h>
 #include <OgreCamera.h>
 namespace GW{
-App*   App::_self = NULL;
+void*   App::_self = NULL;
 App::App(){
 
 }
@@ -25,10 +25,10 @@ void App::createScene	(){
     camera->setNearClipDistance(5);
     camera->setFarClipDistance(5000);
 
-    Ogre::Entity* ogreHead = _scene_manager->createEntity("Head", "ogrehead.mesh");
-    Ogre::SceneNode* headNode = _scene_manager->getRootSceneNode()->createChildSceneNode();
-	headNode->attachObject(ogreHead);
-    
+//    Ogre::Entity* ogreHead = _scene_manager->createEntity("Head", "ogrehead.mesh");
+//    Ogre::SceneNode* headNode = _scene_manager->getRootSceneNode()->createChildSceneNode();
+//	headNode->attachObject(ogreHead);
+
     //Create a light
     Ogre::Light* l = _scene_manager->createLight("MainLight");
     l->setPosition(20,80,50);
