@@ -358,7 +358,8 @@ void android_main(android_app* state)
             }
 
             if (isHold == true) {
-                GW::App::getSingleton()->getStateManager()->getCurrState()->getController()->tapHolded();
+                if (control != NULL)
+                    control->tapHolded();
             }
         }
         while ((ident = ALooper_pollAll(data.animating ? 0 : -1, NULL, &events, (void**)&source)) >= 0){

@@ -2,6 +2,7 @@
 #include "gwGameState.h"
 #include "gwGameStateManager.h"
 #include "OgreEntity.h"
+#include <OgreCamera.h>
 
 GW_IMPLEMENT_APP(sampleApp);
 
