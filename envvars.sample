@@ -1,11 +1,11 @@
 #!/bin/bash
 export PROJECT_NAME=GeometryWars
-export OGRE_ROOT=/home/nvpopov/apps/ogre1_9
-export GAINPUT_PATH=/home/nvpopov/apps/gainput/
 export ANDROID_NDK=/home/nvpopov/apps/android-deps/android-ndk-r9c
 export ANDROID_BUILD=android_build
 export ARMEABI=armeabi
 export ARCH=arm
 export API_LEVEL=14
 export LOCAL_PATH=`pwd`
+export GAINPUT_PATH=${LOCAL_PATH}/deps/gainput
+export OGRE_ROOT=${LOCAL_PATH}/deps/ogre3d
 export PROJECT_PACKAGE="com.ogre3d.geometrywars"

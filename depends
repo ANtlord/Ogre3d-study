@@ -1,0 +1,94 @@
+#!/usr/bin/python2.7
+
+import os,subprocess
+
+#Repo types :3
+REPO_TYPE_GIT=1
+REPO_TYPE_HG=2
+REPO_TYPE_SVN=3
+REPO_TYPE_HTTP=4
+REPO_TYPE_UNKNOWN=5
+
+#Base class for deps
+class GWDependicies(object):
+	submodule = False
+	repopath = ""
+	repotype = REPO_TYPE_UNKNOWN
+	repodir = ""
+	localpath = ""
+	def Get(self):
+		localpath = os.environ['LOCAL_PATH']
+		if self.repopath == "":
+			raise Exception("Variable repopath myst be set!")
+		if (self.repotype < REPO_TYPE_GIT) and (self.repotype >= REPO_TYPE_UNKNOWN):
+			raise Exception("Unknown repository type!")
+		if self.repodir == "":
+			raise Exception("Variable repodir myst be set'")
+	        
+		#subprocess.call("mkdir "+localpath+"/deps/"+self.repodir,shell=True)
+		cdirname = localpath+"/deps/"
+		if self.submodule == True:
+			cdirname += self.repodir+"/"
+			
+		if self.repotype == REPO_TYPE_GIT:
+			subprocess.call("cd "+ cdirname +" ; git clone "+self.repopath,shell=True)
+		if self.repotype == REPO_TYPE_HG:
+			subprocess.call("cd "+ cdirname +"/; hg clone "+self.repopath,shell=True)
+	def Build(self):
+		pass
+
+#Game input crossplatform library depends	
+class gaInputDep(GWDependicies):
+	repodir = "gainput"
+	repopath = "https://github.com/ANtlord/gainput"
+	repotype = REPO_TYPE_GIT
+	def Build(self):
+		self.Get()
+		localpath = os.environ['LOCAL_PATH']
+		ndk_path = os.environ['ANDROID_NDK']
+#How to build
+#cd gainput
+#./waf configure --cross-android --cross-android-ndk=ANDROID_NDK_PATH
+#./waf		
+		command = "cd "+localpath+"/deps/"+self.repodir+"; ./waf configure --cross-android --cross-android-ndk="+ndk_path+\
+		"; ./waf"
+		subprocess.call(command,shell=True)
+	
+#Ogre3d deps without android specific dependicies
+class OgreAndroid(GWDependicies):
+	repodir = "ogre3d"
+	repopath = "https://bitbucket.org/ANtlord/ogre3d"
+	repotype = REPO_TYPE_HG
+	def Build(self):
+		self.Get()
+		localpath = os.environ['LOCAL_PATH']
+		command = "cd "+localpath+"/deps/ogre3d;" +\
+		"mkdir android_build; cd android_build;" +\
+		"cmake -DCMAKE_TOOLCHAIN_FILE=\"../CMake/toolchain/android.toolchain.cmake\" -DOGRE_DEPENDENCIES_DIR=\"../AndroidDependencies\""+\
+		"-DANDROID_ABI=armeabi -DANDROID_NATIVE_API_LEVEL=14 ..; make; make; make;"
+		print command
+		subprocess.call(command,shell=True)	
+
+#Ogre3d android precompiled static libs and headers
+class OgreDepAndroid(GWDependicies):
+	submodule = True
+	repodir = "ogre3d"
+	repopath = "https://github.com/ANtlord/AndroidDependencies"
+	repotype = REPO_TYPE_GIT
+	def Build(self):
+		self.Get()
+
+#Main
+def main():
+	gainp = gaInputDep()
+	gainp.Build()
+
+	ogreand = OgreDepAndroid()
+	ogre = OgreAndroid()
+	
+	ogre.Get()
+	ogreand.Build()
+	ogre.Build()
+
+if __name__ == "__main__":
+    main()
