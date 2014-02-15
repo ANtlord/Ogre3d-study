@@ -1,14 +1,18 @@
-#include "sampleApp.h"
+#include "../include/sampleApp.h"
+#include <android/log.h>
 #include "gwGameState.h"
 #include "gwGameStateManager.h"
 #include "OgreEntity.h"
 #include <OgreCamera.h>
+#include <OgreMaterialManager.h>
+#include <OgreResourceGroupManager.h>
 #include <OgreMeshManager.h>
 #include <OgreHardwareVertexBuffer.h>
 #include <OgreHardwareBuffer.h>
 #include <OgreMesh.h>
 #include <OgreSubMesh.h>
 
+#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "app", __VA_ARGS__))
 GW_IMPLEMENT_APP(sampleApp);
 
 using namespace GW;
@@ -34,7 +38,7 @@ void sampleApp::createScene(){
         /* create the mesh and a single sub mesh */
         Ogre::MeshPtr mesh = Ogre::MeshManager::getSingleton().createManual("CustomMesh", "General");
         Ogre::SubMesh *subMesh = mesh->createSubMesh();
-
+        LOGI("GW_MESH 1");
         /* create the vertex data structure */
         mesh->sharedVertexData = new Ogre::VertexData;
         mesh->sharedVertexData->vertexCount = 3;
@@ -43,6 +47,7 @@ void sampleApp::createScene(){
         Ogre::VertexDeclaration *decl = mesh->sharedVertexData->vertexDeclaration;
         size_t offset = 0;
 
+        LOGI("GW_MESH 2");
         /* the first three floats of each vertex represent the position */
         decl->addElement(0, offset, Ogre::VET_FLOAT3, Ogre::VES_POSITION);
         offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3);
@@ -51,6 +56,7 @@ void sampleApp::createScene(){
         decl->addElement(0, offset, Ogre::VET_FLOAT3, Ogre::VES_NORMAL);
         offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3);
 
+        LOGI("GW_MESH 3");
         /* create the vertex buffer */
         Ogre::HardwareVertexBufferSharedPtr vertexBuffer = Ogre::HardwareBufferManager::getSingleton().
             createVertexBuffer(offset, mesh->sharedVertexData->vertexCount,
@@ -72,6 +78,7 @@ void sampleApp::createScene(){
         /* unlock the buffer */
         vertexBuffer->unlock();
 
+        LOGI("GW_MESH 4");
         /* create the index buffer */
         Ogre::HardwareIndexBufferSharedPtr indexBuffer = Ogre::HardwareBufferManager::getSingleton().
             createIndexBuffer(Ogre::HardwareIndexBuffer::IT_16BIT,
@@ -85,9 +92,12 @@ void sampleApp::createScene(){
         indices[1] = 1;
         indices[2] = 2;
 
+        LOGI("GW_MESH 5");
         /* unlock the buffer */
         indexBuffer->unlock();
 
+        LOGI("GW_MESH 6");
+        /* unlock the buffer */
         /* attach the buffers to the mesh */
         mesh->sharedVertexData->vertexBufferBinding->setBinding(0, vertexBuffer);
         subMesh->useSharedVertices = true;
@@ -95,17 +105,28 @@ void sampleApp::createScene(){
         subMesh->indexData->indexCount = mesh->sharedVertexData->vertexCount;
         subMesh->indexData->indexStart = 0;
 
+        LOGI("GW_MESH 7");
         /* set the bounds of the mesh */
         mesh->_setBounds(Ogre::AxisAlignedBox(-1, -1, -1, 1, 1, 1));
 
         /* notify the mesh that we're all ready */
         mesh->load();
 
+        LOGI("GW_MESH 8");
+        //Create material
+        
+        Ogre::MaterialPtr material = Ogre::MaterialManager::getSingleton().create(
+                "superMaterial", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME
+                );
+        material->setAmbient(Ogre::Real(1), Ogre::Real(0), Ogre::Real(0));
+
         /* you can now create an entity/scene node based on your mesh, e.g. */
+        LOGI("GW_MESH 9");
         Ogre::Entity *entity = _scene_manager->createEntity("CustomEntity", "CustomMesh", "General");
-        entity->setMaterialName("YourMaterial", "General");
+        entity->setMaterialName("superMaterial", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
         Ogre::SceneNode *node = _scene_manager->getRootSceneNode()->createChildSceneNode();
         node->translate(0,0, -100);
+        node->scale(50., 50., 50.);
         node->attachObject(entity);
         ///-------------------------
 
