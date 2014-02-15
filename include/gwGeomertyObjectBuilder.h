@@ -11,13 +11,12 @@ public:
     GeometryObjectBuilder();
     virtual ~GeometryObjectBuilder();
     BasicGeometryObject * getBasicGeometryObject() const;
-    virtual void buildGeometryObject()=0;
 
 protected:
+    BasicGeometryObject * _basicGeometryObject;
 
 
 private:
-    BasicGeometryObject * _basicGeometryObject;
 
 };
 }

@@ -2,7 +2,7 @@
 
 namespace GW {
 
-GeometryObjectBuilder::GeometryObjectBuilder()
+GeometryObjectBuilder::GeometryObjectBuilder() : _basicGeometryObject(NULL)
 {
 
 }

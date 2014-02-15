@@ -1,7 +1,7 @@
 #include "../include/gwTriangleBuilder.h"
 namespace GW {
 
-TriangleBuilder::TriangleBuilder()
+TriangleBuilder::TriangleBuilder() : GeometryObjectBuilder()
 {
 
 }
@@ -11,8 +11,12 @@ TriangleBuilder::~TriangleBuilder()
 
 }
 
-void TriangleBuilder::buildMesh()
+void TriangleBuilder::buildGeometryObject(const std::string &name,
+        const float colorValues[3], const Ogre::Vector3 * vertexesCoords,
+        Ogre::SceneManager * sm)
 {
+    _basicGeometryObject = new BasicGeometryObject(name, colorValues, 3, 3,
+            vertexesCoords, sm);
 }
 
 }

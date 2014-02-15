@@ -60,10 +60,11 @@ BasicGeometryObject::BasicGeometryObject(const std::string &name, const float co
     for (unsigned short i = 0; i < vertexNum*NUM_PARAMS_INDEXES; ++i) {
         unsigned char idx = i % NUM_PARAMS_INDEXES;
         if (idx < NUM_POSITION_INDEXES) {  // Set position.
-            vertices[i] = vertexesCoords[i][idx];
+            unsigned char idx2 = (i - (idx)) / NUM_POSITION_INDEXES;
+            vertices[i] = vertexesCoords[idx2][idx];
         }
         else {  // Set color.
-            vertices[i] = colorValues[idx - NUM_POSITION_INDEXES];
+            vertices[i] = colorValues[1];
         }
     }
 

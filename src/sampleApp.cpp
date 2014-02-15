@@ -1,7 +1,10 @@
 #include "../include/sampleApp.h"
 #include <android/log.h>
+
 #include "gwGameState.h"
 #include "gwGameStateManager.h"
+#include "../include/gwTriangleBuilder.h"
+
 #include "OgreEntity.h"
 #include <OgreCamera.h>
 #include <OgreMaterialManager.h>
@@ -35,7 +38,10 @@ void sampleApp::createScene(){
         headNode->attachObject(ogreHead);
         headNode->scale(0.25f,0.25f,0.25f);
 
-
+        TriangleBuilder Jamshut;
+        float colors[3] = {1,0,0};
+        Ogre::Vector3 coords[3];
+        Jamshut.buildGeometryObject("customMesh", colors, coords, _scene_manager);
 
         //Create a light
         Ogre::Light* l = _scene_manager->createLight("MainLight");

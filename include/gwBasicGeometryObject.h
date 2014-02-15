@@ -4,6 +4,7 @@
 #include <OgreMesh.h>
 #include <OgreVector3.h>
 #include <OgreNode.h>
+#include <OgreEntity.h>
 #include <OgreSceneManager.h>
 
 namespace GW {
