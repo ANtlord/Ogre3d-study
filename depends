@@ -78,6 +78,18 @@ class OgreDepAndroid(GWDependicies):
 	def Build(self):
 		self.Get()
 
+#Bullet4Droid dependicie
+class Bullet4Droid(GWDependicies):
+	submodule = False
+	repodir = "bullet4droid"
+	repopath = "https://github.com/ZloyBabai/bullet4droid"
+	repotype = REPO_TYPE_GIT
+	def Build(self):
+		self.Get()
+		localpath = os.environ['LOCAL_PATH']
+		command = "cd "+localpath+"/deps/bullet4droid; ndk-build;"
+		subprocess.call(command,shell=True) 
+
 #Main
 def main():
 	gainp = gaInputDep()
@@ -89,6 +101,9 @@ def main():
 	ogre.Get()
 	ogreand.Build()
 	ogre.Build()
+
+	bullet = Bullet4Droid()
+	bullet.Build()
 
 if __name__ == "__main__":
     main()
