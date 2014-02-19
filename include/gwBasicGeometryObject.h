@@ -12,8 +12,15 @@ namespace GW {
 class BasicGeometryObject {
 public:
     BasicGeometryObject();
-    BasicGeometryObject(const std::string &name, const float colorValues[3], const short &vertexNum,
+
+    BasicGeometryObject(const std::string &name, const float normalCoords[3], const short &vertexNum,
         const uint16_t &numTriangles, const Ogre::Vector3 * vertexesCoords, Ogre::SceneManager * sm);
+
+    BasicGeometryObject(const std::string &name, const float normalCoords[3], const short &vertexNum,
+            const uint16_t &numTriangles, const Ogre::Vector3 * vertexesCoords, Ogre::SceneManager * sm,
+            Ogre::String matName);
+
+
     virtual ~BasicGeometryObject();
 
     void setColor(const float& red, const float& green, const float& blue);
@@ -31,14 +38,16 @@ protected:
 
 
 private:
+    void baseConstructor(const std::string &name, const float normalCoords[3], const short &vertexNum,
+        const uint16_t &numTriangles, const Ogre::Vector3 * vertexesCoords, Ogre::SceneManager * sm);
     unsigned short _numVertexes;
     unsigned short _numTriangles;
-    unsigned _color[3];
+    unsigned _normalCoords[3];
     std::string _name;
     Ogre::MeshPtr _mesh;
     Ogre::SceneNode * _node;
     Ogre::Entity * _entity;
-
+    Ogre::MaterialPtr _material;
 };
 
 }

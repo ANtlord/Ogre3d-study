@@ -1,4 +1,5 @@
 #include "../include/gwBasicGeometryObject.h"
+#include <android/log.h>
 
 #include <OgreMaterialManager.h>
 #include <OgreHardwareBufferManager.h>
@@ -8,6 +9,7 @@
 #include <OgreHardwareBuffer.h>
 #include <OgreSubMesh.h>
 
+#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "app", __VA_ARGS__))
 
 namespace GW {
 
@@ -16,14 +18,18 @@ BasicGeometryObject::BasicGeometryObject()
 
 }
 
-BasicGeometryObject::BasicGeometryObject(const std::string &name, const float colorValues[3],
-        const short &vertexNum, const uint16_t &numTriangles,
-        const Ogre::Vector3 * vertexesCoords, Ogre::SceneManager * sm) :
-    _numVertexes(vertexNum),
-    _numTriangles(numTriangles),
-    _name(name)
+void BasicGeometryObject::baseConstructor(const std::string &name,
+        const float normalCoords[3], const short &vertexNum,
+        const uint16_t &numTriangles, const Ogre::Vector3 * vertexesCoords,
+        Ogre::SceneManager * sm)
 {
-    setColor(colorValues[0], colorValues[1], colorValues[2]);
+    _numVertexes=vertexNum;
+    _numTriangles=numTriangles;
+    _name=name;
+    _entity = NULL;
+    _material = NULL;
+
+    setColor(normalCoords[0], normalCoords[1], normalCoords[2]);
 
     /* create the mesh and a single sub mesh */
     Ogre::MeshPtr mesh = Ogre::MeshManager::getSingleton().createManual(name, "General");
@@ -36,7 +42,7 @@ BasicGeometryObject::BasicGeometryObject(const std::string &name, const float co
     /* declare how the vertices will be represented */
     Ogre::VertexDeclaration *decl = mesh->sharedVertexData->vertexDeclaration;
     size_t offset = 0;
-    
+
     /* the first three floats of each vertex represent the position */
     decl->addElement(0, offset, Ogre::VET_FLOAT3, Ogre::VES_POSITION);
     offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3);
@@ -44,7 +50,6 @@ BasicGeometryObject::BasicGeometryObject(const std::string &name, const float co
     /* the second three floats of each vertex represent the colour */
     decl->addElement(0, offset, Ogre::VET_FLOAT3, Ogre::VES_NORMAL);
     offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3);
-
 
     /* create the vertex buffer */
     Ogre::HardwareVertexBufferSharedPtr vertexBuffer = Ogre::HardwareBufferManager::getSingleton().
@@ -54,32 +59,23 @@ BasicGeometryObject::BasicGeometryObject(const std::string &name, const float co
     /* lock the buffer so we can get exclusive access to its data */
     float *vertices = static_cast<float *>(vertexBuffer->lock(Ogre::HardwareBuffer::HBL_NORMAL));
 
-    /* populate the buffer with some data */
     const unsigned char NUM_PARAMS_INDEXES = 6;
     const unsigned char NUM_POSITION_INDEXES = 3;
     for (unsigned short i = 0; i < vertexNum*NUM_PARAMS_INDEXES; ++i) {
         unsigned char idx = i % NUM_PARAMS_INDEXES;
         if (idx < NUM_POSITION_INDEXES) {  // Set position.
-            unsigned char idx2 = (i - (idx)) / NUM_POSITION_INDEXES;
+            unsigned char idx2 = (i - idx) / (2*NUM_POSITION_INDEXES);
             vertices[i] = vertexesCoords[idx2][idx];
         }
         else {  // Set color.
-            vertices[i] = colorValues[1];
+            unsigned char idx3 = i % NUM_POSITION_INDEXES;
+            vertices[i] = normalCoords[idx3];
         }
     }
 
-    //vertices[0] = 0; vertices[1] = 1; vertices[2] = 0; [> position <]
-    //vertices[3] = 1; vertices[4] = 0; vertices[5] = 0; [> colour <]
-
-    //vertices[6] = -1; vertices[7] = -1; vertices[8] = 0; [> position <]
-    //vertices[9] = 0; vertices[10] = 1; vertices[11] = 0; [> colour <]
-
-    //vertices[12] = 1; vertices[13] = -1; vertices[14] = 0; [> position <]
-    //vertices[15] = 0; vertices[16] = 0; vertices[17] = 1; [> colour <]
-
     /* unlock the buffer */
     vertexBuffer->unlock();
-    
+
     /* create the index buffer */
     Ogre::HardwareIndexBufferSharedPtr indexBuffer = Ogre::HardwareBufferManager::getSingleton().
         createIndexBuffer(Ogre::HardwareIndexBuffer::IT_16BIT,
@@ -92,10 +88,10 @@ BasicGeometryObject::BasicGeometryObject(const std::string &name, const float co
     for (unsigned short i = 0; i < vertexNum; i++) {
         indices[i] = i;
     }
-    
+
     /* unlock the buffer */
     indexBuffer->unlock();
-    
+
     /* unlock the buffer */
     /* attach the buffers to the mesh */
     mesh->sharedVertexData->vertexBufferBinding->setBinding(0, vertexBuffer);
@@ -104,29 +100,47 @@ BasicGeometryObject::BasicGeometryObject(const std::string &name, const float co
     subMesh->indexData->indexCount = mesh->sharedVertexData->vertexCount;
     subMesh->indexData->indexStart = 0;
 
-    
     /* set the bounds of the mesh */
     mesh->_setBounds(Ogre::AxisAlignedBox(-1, -1, -1, 1, 1, 1));
-
     /* notify the mesh that we're all ready */
     mesh->load();
 
+}
+
+BasicGeometryObject::BasicGeometryObject(const std::string &name, const float normalCoords[3],
+        const short &vertexNum, const uint16_t &numTriangles,
+        const Ogre::Vector3 * vertexesCoords, Ogre::SceneManager * sm)
+{
+    baseConstructor(name, normalCoords, vertexNum, numTriangles, vertexesCoords, sm);
+}
+
+BasicGeometryObject::BasicGeometryObject(const std::string &name, const float normalCoords[3],
+        const short &vertexNum, const uint16_t &numTriangles,
+        const Ogre::Vector3 * vertexesCoords, Ogre::SceneManager * sm, Ogre::String matName)
+{
+    baseConstructor(name, normalCoords, vertexNum, numTriangles, vertexesCoords, sm);
     //Create material
     Ogre::MaterialPtr material = Ogre::MaterialManager::getSingleton().create(
             "superMaterial", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME
             );
-    material->setAmbient(Ogre::Real(1), Ogre::Real(0), Ogre::Real(0));
+    Ogre::Technique* lFirstTechnique = material->getTechnique(0);
+    Ogre::Pass* lFirstPass = lFirstTechnique->getPass(0);
+    lFirstPass->setDiffuse(0.8f, 0.0f, 0.0f, 1.0f);
+    lFirstPass->setAmbient(0.3f, 0.3f, 0.3f);
+    lFirstPass->setSpecular(0.0f, 0.0f, 1.0f, 1.0f);
+    lFirstPass->setShininess(0.0f);
+    lFirstPass->setSelfIllumination(0.1f, 0.1f, 0.1f);
 
     //[> you can now create an entity/scene node based on your mesh, e.g. <]
-    //// TODO: make access to scene_manager
-    Ogre::Entity *entity = sm->createEntity("CustomEntity", "CustomMesh", "General");
-    _entity = entity;
-    entity->setMaterialName("superMaterial", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-    Ogre::SceneNode *node = sm->getRootSceneNode()->createChildSceneNode();
-    _node = node;
-    //node->translate(0,0, -100);
-    //node->scale(50., 50., 50.);
-    node->attachObject(entity);
+    // TODO: make access to scene_manager
+    _entity = sm->createEntity("CustomEntity", name, "General");
+    _entity->setMaterialName("superMaterial");
+    _entity->setCastShadows(false);
+
+    _node = sm->getRootSceneNode()->createChildSceneNode();
+    _node->translate(0, 20, -10);
+    _node->scale(5., 5., 5.);
+    _node->attachObject(_entity);
 }
 
 BasicGeometryObject::~BasicGeometryObject()
@@ -134,11 +148,12 @@ BasicGeometryObject::~BasicGeometryObject()
 
 }
 
-void BasicGeometryObject::setColor(const float& red, const float& green, const float& blue)
+void BasicGeometryObject::setColor(const float& red, const float& green,
+        const float& blue)
 {
-    _color[0] = red;
-    _color[1] = green;
-    _color[2] = blue;
+    _normalCoords[0] = red;
+    _normalCoords[1] = green;
+    _normalCoords[2] = blue;
 }
 
 void BasicGeometryObject::setColor(const float values[3])

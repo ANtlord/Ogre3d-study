@@ -10,7 +10,7 @@ public:
     virtual ~TriangleBuilder();
     virtual void buildGeometryObject(const std::string &name,
         const float colorValues[3], const Ogre::Vector3 * vertexesCoords,
-        Ogre::SceneManager * sm);
+        Ogre::SceneManager * sm, Ogre::String matName);
 
 protected:
 
