@@ -90,6 +90,18 @@ class Bullet4Droid(GWDependicies):
 		command = "cd "+localpath+"/deps/bullet4droid; ndk-build;"
 		subprocess.call(command,shell=True) 
 
+#OpenAL for android
+class OpenALDep(GWDependicies):
+	submodule = False
+	repodir = "openal-soft"
+	repopath = "https://github.com/ZloyBabai/openal-soft"
+	repotype = REPO_TYPE_GIT
+	def Build(self):
+		self.Get()
+		localpath = os.environ['LOCAL_PATH']
+		command = "cd "+localpath+"/deps/openal-soft/jni; ndk-build;"
+		subprocess.call(command,shell=True)
+
 #Main
 def main():
 	gainp = gaInputDep()
@@ -104,6 +116,8 @@ def main():
 
 	bullet = Bullet4Droid()
 	bullet.Build()
-
+	
+	openal = OpenALDep()
+	openal.Build()
 if __name__ == "__main__":
     main()

@@ -8,5 +8,6 @@ export API_LEVEL=14
 export LOCAL_PATH=`pwd`
 export GAINPUT_PATH=${LOCAL_PATH}/deps/gainput
 export BULLET3D_PATH=${LOCAL_PATH}/deps/bullet4droid
+export OPENAL_PATH=${LOCAL_PATH}/deps/openal-soft
 export OGRE_ROOT=${LOCAL_PATH}/deps/ogre3d
 export PROJECT_PACKAGE="com.ogre3d.geometrywars"
