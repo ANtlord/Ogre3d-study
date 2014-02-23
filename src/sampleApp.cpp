@@ -4,6 +4,7 @@
 #include "gwGameState.h"
 #include "gwGameStateManager.h"
 #include "../include/gwTriangleBuilder.h"
+#include "../include/gwQuadBuilder.h"
 
 #include "OgreEntity.h"
 #include <OgreCamera.h>
@@ -52,9 +53,44 @@ void sampleApp::createScene(){
 
     TriangleBuilder Jamshut;
     float colors[3] = {0,0,1};
-    Ogre::Vector3 coords[3];
-    coords[0].x = 0; coords[0].y = 1; coords[0].z = 0;
-    coords[1].x = -1; coords[1].y = -1; coords[1].z = 0;
-    coords[2].x = 1; coords[2].y = -1; coords[2].z = 0;
-    Jamshut.buildGeometryObject("customMesh", colors, coords, _scene_manager, matName);
+     
+    const float ** coords = new const float*[3];
+    float *arr;
+
+    // This is LEAK. Must be FIXED.
+    arr = new float[3];
+    arr[0] = 0; arr[1] = 1; arr[2] = 0;
+    coords[0] = arr;
+
+    arr = new float[3];
+    arr[0] = -1; arr[1] = -1; arr[2] = 0;
+    coords[1] = arr;
+
+    arr = new float[3];
+    arr[0] = 1; arr[1] = -1; arr[2] = 0;
+    coords[2] = arr;
+    
+    Jamshut.buildGeometryObject("customMesh", colors, coords, _scene_manager,
+            "rubyMaterial", 10, 10);
+
+    const float ** coords2 = new const float*[4];
+
+    arr = new float[3];
+    arr[0] = -1; arr[1] = 1; arr[2] = 0;
+    coords2[0] = arr;
+
+    arr = new float[3];
+    arr[0] = -1; arr[1] = -1; arr[2] = 0;
+    coords2[1] = arr;
+
+    arr = new float[3];
+    arr[0] = 1; arr[1] = -1; arr[2] = 0;
+    coords2[2] = arr;
+
+    arr = new float[3];
+    arr[0] = 1; arr[1] = 1; arr[2] = 0;
+    coords2[3] = arr;
+    QuadBuilder Rafshan;
+    Rafshan.buildGeometryObject("customMesh2", colors, coords2, _scene_manager,
+            "rubyMaterial", -10, 10);
 }

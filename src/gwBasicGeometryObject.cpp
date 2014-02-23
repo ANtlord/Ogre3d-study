@@ -9,6 +9,9 @@
 #include <OgreHardwareBuffer.h>
 #include <OgreSubMesh.h>
 
+#include <ctime>
+#include <cstdlib>
+
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "app", __VA_ARGS__))
 
 namespace GW {
@@ -20,7 +23,7 @@ BasicGeometryObject::BasicGeometryObject()
 
 void BasicGeometryObject::baseConstructor(const std::string &name,
         const float normalCoords[3], const short &vertexNum,
-        const uint16_t &numTriangles, const Ogre::Vector3 * vertexesCoords,
+        const uint16_t &numTriangles, const float ** vertexesCoords,
         Ogre::SceneManager * sm)
 {
     _numVertexes=vertexNum;
@@ -31,8 +34,13 @@ void BasicGeometryObject::baseConstructor(const std::string &name,
     _node = sm->getRootSceneNode()->createChildSceneNode();
     _mesh = Ogre::MeshManager::getSingleton().createManual(name, "General");
 
-    setNormal(normalCoords[0], normalCoords[1], normalCoords[2]);
-
+    //for (char i = 0; i < 3; i++) {
+        //for (char j = 0; j < 3; j++) {
+            //LOGI("GW_MESH %f", vertexesCoords[i][j]);
+        //}
+        
+    //}
+    
     setNormal(normalCoords[0], normalCoords[1], normalCoords[2]);
     /* create the mesh and a single sub mesh */
     Ogre::SubMesh *subMesh = _mesh->createSubMesh();
@@ -67,13 +75,23 @@ void BasicGeometryObject::baseConstructor(const std::string &name,
         unsigned char idx = i % NUM_PARAMS_INDEXES;
         if (idx < NUM_POSITION_INDEXES) {  // Set position.
             unsigned char idx2 = (i - idx) / (2*NUM_POSITION_INDEXES);
+            LOGI("GW_MESH vertexesCoords[%i][%i] %f", idx2, idx, vertexesCoords[idx2][idx]);
             vertices[i] = vertexesCoords[idx2][idx];
         }
-        else {  // Set color.
+        else {  // Set normal.
             unsigned char idx3 = i % NUM_POSITION_INDEXES;
+            LOGI("GW_MESH normalCoords[%i]=%f", idx3, normalCoords[idx3]);
             vertices[i] = normalCoords[idx3];
         }
     }
+    //vertices[0] = 0; vertices[1] = 1; vertices[2] = 0; [> position <]
+    //vertices[3] = 0; vertices[4] = 0; vertices[5] = 1; [> colour <]
+
+    //vertices[6] = -1; vertices[7] = -1; vertices[8] = 0; [> position <]
+    //vertices[9] = 0; vertices[10] = 0; vertices[11] = 1; [> colour <]
+
+    //vertices[12] = 1; vertices[13] = -1; vertices[14] = 0; [> position <]
+    //vertices[15] = 0; vertices[16] = 0; vertices[17] = 1; [> colour <]
 
     /* unlock the buffer */
     vertexBuffer->unlock();
@@ -106,18 +124,21 @@ void BasicGeometryObject::baseConstructor(const std::string &name,
     _mesh->_setBounds(Ogre::AxisAlignedBox(-1, -1, -1, 1, 1, 1));
     /* notify the mesh that we're all ready */
     _mesh->load();
+
+    LOGI("GW_MESH vertexNum=%i", vertexNum);
+    LOGI("GW_MESH _mesh->sharedVertexData->vertexCount=%i", _mesh->sharedVertexData->vertexCount);
 }
 
 BasicGeometryObject::BasicGeometryObject(const std::string &name, const float normalCoords[3],
         const short &vertexNum, const uint16_t &numTriangles,
-        const Ogre::Vector3 * vertexesCoords, Ogre::SceneManager * sm)
+        const float ** vertexesCoords, Ogre::SceneManager * sm)
 {
     baseConstructor(name, normalCoords, vertexNum, numTriangles, vertexesCoords, sm);
 }
 
 BasicGeometryObject::BasicGeometryObject(const std::string &name, const float normalCoords[3],
         const short &vertexNum, const uint16_t &numTriangles,
-        const Ogre::Vector3 * vertexesCoords, Ogre::SceneManager * sm, Ogre::String matName)
+        const float ** vertexesCoords, Ogre::SceneManager * sm, Ogre::String matName)
 {
     baseConstructor(name, normalCoords, vertexNum, numTriangles, vertexesCoords, sm);
     //Create material
@@ -132,9 +153,14 @@ BasicGeometryObject::BasicGeometryObject(const std::string &name, const float no
     lFirstPass->setShininess(0.0f);
     lFirstPass->setSelfIllumination(0.1f, 0.1f, 0.1f);
 
+    // Generating name for entity.
+    std::stringstream strm;
+    strm<<time(0)<<std::rand();
+    std::string entityName = ("Vasia"+strm.str());
+
     //[> you can now create an entity/scene node based on your mesh, e.g. <]
     // TODO: make access to scene_manager
-    _entity = sm->createEntity("CustomEntity", name, "General");
+    _entity = sm->createEntity(entityName, name, "General");
     _entity->setMaterialName("superMaterial");
     _entity->setCastShadows(false);
 
