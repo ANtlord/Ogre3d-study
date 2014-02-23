@@ -26,8 +26,6 @@ void BasicGeometryObject::baseConstructor(const std::string &name,
     _numVertexes=vertexNum;
     _numTriangles=numTriangles;
     _name=name;
-    _entity = NULL;
-    _material = NULL;
 
     setColor(normalCoords[0], normalCoords[1], normalCoords[2]);
 
