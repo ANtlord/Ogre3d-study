@@ -153,23 +153,38 @@ BasicGeometryObject::BasicGeometryObject(const std::string &name, const float no
         //man->normal(0,0,1);
     //}
     int mapSize = 3;
-    for(int z = 0; z < mapSize; ++z) {
-       for(int x = 0; x < mapSize; ++x) {
-          man->position(z,x,0);
+    //for(int z = 0; z < mapSize; ++z) {
+       //for(int x = 0; x < mapSize; ++x) {
+          man->position(-1,1,0);
           man->normal(0,0,1);
-       }
-    }
 
-    for(int z = 0; z < mapSize-1; ++z) {
-        for(int x = 0; x < mapSize-1; ++x) {
-            int i1 = (x) + (z) * mapSize;
-            int i2 = (x) + (z + 1) * mapSize;
-            int i3 = (x + 1) + (z + 1) * mapSize;
-            int i4 = (x + 1) + (z) * mapSize;
-            man->triangle(i1, i2, i3);
-            LOGI("GW_MESH i1=%i, i2=%i, i3=%i, i4=%i", i1, i2, i3, i4);
-        }
-    }
+          man->position(-1,-1,0);
+          man->normal(0,0,1);
+
+          man->position(1,-1,0);
+          man->normal(0,0,1);
+
+          man->position(1,1,0);
+          man->normal(0,0,1);
+
+          man->position(2., 1., 0.);
+          man->normal(0,0,1);
+       //}
+    //}
+
+    man->triangle(0, 1, 2);
+    man->triangle(2, 3, 0);
+    man->triangle(2, 4, 3);
+    //for(int z = 0; z < mapSize-1; ++z) {
+        //for(int x = 0; x < mapSize-1; ++x) {
+            //int i1 = (x) + (z) * mapSize;
+            //int i2 = (x) + (z + 1) * mapSize;
+            //int i3 = (x + 1) + (z + 1) * mapSize;
+            //int i4 = (x + 1) + (z) * mapSize;
+            //man->triangle(i1, i2, i3);
+            //LOGI("GW_MESH i1=%i, i2=%i, i3=%i, i4=%i", i1, i2, i3, i4);
+        //}
+    //}
     man->end();
         // Generating name for entity.
     std::stringstream strm;
