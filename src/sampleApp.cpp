@@ -69,9 +69,22 @@ void sampleApp::createScene(){
     arr = new float[3];
     arr[0] = 1; arr[1] = -1; arr[2] = 0;
     coords[2] = arr;
-    
+
+    const std::string MAT_NAME = "superMaterial";
+    Ogre::MaterialPtr mat = Ogre::MaterialManager::getSingleton().create(
+            MAT_NAME, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME
+            );
+    Ogre::Technique* lFirstTechnique = mat->getTechnique(0);
+    Ogre::Pass* lFirstPass = lFirstTechnique->getPass(0);
+    lFirstPass->setDiffuse(0.8f, 0.0f, 0.0f, 1.0f);
+    lFirstPass->setAmbient(0.3f, 0.3f, 0.3f);
+    lFirstPass->setSpecular(0.0f, 0.0f, 1.0f, 1.0f);
+    lFirstPass->setShininess(0.0f);
+    lFirstPass->setSelfIllumination(0.1f, 0.1f, 0.1f);
+
+ 
     Jamshut.buildGeometryObject("customMesh", colors, coords, _scene_manager,
-            "rubyMaterial", 10, 10);
+            MAT_NAME, 10, 10);
 
     const float ** coords2 = new const float*[4];
 
@@ -92,5 +105,5 @@ void sampleApp::createScene(){
     coords2[3] = arr;
     QuadBuilder Rafshan;
     Rafshan.buildGeometryObject("customMesh2", colors, coords2, _scene_manager,
-            "rubyMaterial", -10, 10);
+            MAT_NAME, -10, 10);
 }
