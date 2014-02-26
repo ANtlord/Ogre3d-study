@@ -167,14 +167,14 @@ BasicGeometryObject::BasicGeometryObject(const std::string &name, const float no
           man->position(1,1,0);
           man->normal(0,0,1);
 
-          man->position(2., 1., 0.);
-          man->normal(0,0,1);
+          //man->position(2., 1., 0.);
+          //man->normal(0,0,1);
        //}
     //}
 
-    man->triangle(0, 1, 2);
+    man->triangle(1, 2, 0);
     man->triangle(2, 3, 0);
-    man->triangle(2, 4, 3);
+    //man->triangle(2, 4, 3);
     //for(int z = 0; z < mapSize-1; ++z) {
         //for(int x = 0; x < mapSize-1; ++x) {
             //int i1 = (x) + (z) * mapSize;
