@@ -67,4 +67,7 @@ bool checkPoint(const double &x_a, const double &y_a,  const double &x_b,
 std::vector <int*> points_delaunay_naive_2d(int node_num, double node_xy[],
         int *triangle_num);
 
+
+std::vector <int*> points_delaunay_naive_2d(int node_num, float node_xy[],
+        int *triangle_num);
 };

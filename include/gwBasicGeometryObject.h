@@ -16,9 +16,9 @@ public:
     //BasicGeometryObject(const std::string &name, const float normalCoords[3], const short &vertexNum,
         //const uint16_t &numTriangles, const float ** vertexesCoords, Ogre::SceneManager * sm);
 
-    BasicGeometryObject(const std::string &name, const float normalCoords[3], const short &vertexNum,
-            const uint16_t &numTriangles, const float ** vertexesCoords, Ogre::SceneManager * sm,
-            Ogre::String matName);
+    BasicGeometryObject(const std::string &name, const float normalCoords[3],
+            const short &vertexNum, const float ** vertexesCoords,
+            Ogre::SceneManager * sm, Ogre::String matName);
 
 
     virtual ~BasicGeometryObject();
@@ -26,7 +26,6 @@ public:
     void setNormal(const float& x, const float& y, const float& z);
     void setNormal(const float values[3]);
     void setNumVertexes(const short &value);
-    void setNumTriangles(const short &value);
     void setName(const std::string &value);
 
     std::string getName() const;
@@ -34,14 +33,15 @@ public:
     Ogre::SceneNode * getNode() const;
     Ogre::Entity * getEntity() const;
     Ogre::MaterialPtr getMaterial() const;
+    int getNumTriangles() const;
 
 protected:
 
 
 private:
     void baseConstructor(const std::string &name, const float normalCoords[3],
-            const short &vertexNum, const uint16_t &numTriangles,
-            const float * vertexesCoords, Ogre::SceneManager * sm);
+            const short &vertexNum, const float * vertexesCoords,
+            Ogre::SceneManager * sm);
     unsigned short _numVertexes;
     unsigned short _numTriangles;
     float _normalCoords[3];

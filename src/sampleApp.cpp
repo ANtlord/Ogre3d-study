@@ -58,16 +58,16 @@ void sampleApp::createScene(){
     float *arr;
 
     // This is LEAK. Must be FIXED.
-    arr = new float[3];
-    arr[0] = 0; arr[1] = 1; arr[2] = 0;
+    arr = new float[2];
+    arr[0] = 0; arr[1] = 1;
     coords[0] = arr;
 
-    arr = new float[3];
-    arr[0] = -1; arr[1] = -1; arr[2] = 0;
+    arr = new float[2];
+    arr[0] = -1; arr[1] = -1;
     coords[1] = arr;
 
-    arr = new float[3];
-    arr[0] = 1; arr[1] = -1; arr[2] = 0;
+    arr = new float[2];
+    arr[0] = 1; arr[1] = -1;
     coords[2] = arr;
 
     const std::string MAT_NAME = "superMaterial";
@@ -88,22 +88,48 @@ void sampleApp::createScene(){
 
     const float ** coords2 = new const float*[4];
 
-    arr = new float[3];
-    arr[0] = -1; arr[1] = 1; arr[2] = 0;
+    arr = new float[2];
+    arr[0] = -1; arr[1] = 1;
     coords2[0] = arr;
 
-    arr = new float[3];
-    arr[0] = -1; arr[1] = -1; arr[2] = 0;
+    arr = new float[2];
+    arr[0] = -1; arr[1] = -1;
     coords2[1] = arr;
 
-    arr = new float[3];
-    arr[0] = 1; arr[1] = -1; arr[2] = 0;
+    arr = new float[2];
+    arr[0] = 1; arr[1] = -1;
     coords2[2] = arr;
 
-    arr = new float[3];
-    arr[0] = 1; arr[1] = 1; arr[2] = 0;
+    arr = new float[2];
+    arr[0] = 1; arr[1] = 1;
     coords2[3] = arr;
     QuadBuilder Rafshan;
-    Rafshan.buildGeometryObject("customMesh2", colors, coords2, _scene_manager,
-            MAT_NAME, -10, 10);
+    //Rafshan.buildGeometryObject("customMesh2", colors, coords2, _scene_manager,
+            //MAT_NAME, -10, 10);
+
+    const float ** coords3 = new const float*[5];
+
+    arr = new float[2];
+    arr[0] = 0; arr[1] = -1;
+    coords3[0] = arr;
+
+    arr = new float[2];
+    arr[0] = 0.5; arr[1] = 0.5;
+    coords3[1] = arr;
+
+    arr = new float[2];
+    arr[0] = -0.5; arr[1] = 1;
+    coords3[2] = arr;
+
+    arr = new float[2];
+    arr[0] = -1.0; arr[1] = 0.5;
+    coords3[3] = arr;
+
+    arr = new float[2];
+    arr[0] = -1; arr[1] = -0.5;
+    coords3[4] = arr;
+
+    BasicGeometryObject * basicGeometryObject = new BasicGeometryObject("qwe", colors, 5,
+            coords3, _scene_manager, MAT_NAME);
+    basicGeometryObject->getNode()->translate(-10,10,0);
 }
