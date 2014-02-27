@@ -1,4 +1,5 @@
 #include "../include/gwBasicGeometryObject.h"
+#include "../include/gwTriangulate.h"
 #include <android/log.h>
 
 #include <OgreManualObject.h>
@@ -12,6 +13,9 @@
 
 #include <ctime>
 #include <cstdlib>
+#include <vector>
+
+using namespace std;
 
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "app", __VA_ARGS__))
 
@@ -24,7 +28,7 @@ BasicGeometryObject::BasicGeometryObject()
 
 void BasicGeometryObject::baseConstructor(const std::string &name,
         const float normalCoords[3], const short &vertexNum,
-        const uint16_t &numTriangles, const float ** vertexesCoords,
+        const uint16_t &numTriangles, const float * vertexesCoords,
         Ogre::SceneManager * sm)
 {
     _numVertexes=vertexNum;
@@ -127,53 +131,62 @@ void BasicGeometryObject::baseConstructor(const std::string &name,
     //[> notify the mesh that we're all ready <]
     //_mesh->load();
 
-    LOGI("GW_MESH _numVertexes=%i", _numVertexes);
+    //LOGI("GW_MESH _numVertexes=%i", _numVertexes);
     //LOGI("GW_MESH _mesh->sharedVertexData->vertexCount=%i", _mesh->sharedVertexData->vertexCount);
 }
 
-BasicGeometryObject::BasicGeometryObject(const std::string &name, const float normalCoords[3],
-        const short &vertexNum, const uint16_t &numTriangles,
-        const float ** vertexesCoords, Ogre::SceneManager * sm)
-{
-    baseConstructor(name, normalCoords, vertexNum, numTriangles, vertexesCoords, sm);
-}
+//BasicGeometryObject::BasicGeometryObject(const std::string &name, const float normalCoords[3],
+        //const short &vertexNum, const uint16_t &numTriangles,
+        //const float ** vertexesCoords, Ogre::SceneManager * sm)
+//{
+    //baseConstructor(name, normalCoords, vertexNum, numTriangles, vertexesCoords, sm);
+//}
 
 BasicGeometryObject::BasicGeometryObject(const std::string &name, const float normalCoords[3],
         const short &vertexNum, const uint16_t &numTriangles,
         const float ** vertexesCoords, Ogre::SceneManager * sm, Ogre::String matName)
 {
-    baseConstructor(name, normalCoords, vertexNum, numTriangles, vertexesCoords, sm);
+    _vertexCoords = new float[vertexNum*2];
+    for (int i = 0; i < vertexNum; i++) {
+        _vertexCoords[0+2*i] = vertexesCoords[i][0];
+        _vertexCoords[1+2*i] = vertexesCoords[i][1];
+    }
+
+    baseConstructor(name, normalCoords, vertexNum, numTriangles, _vertexCoords, sm);
     //Create material
     _material = Ogre::MaterialManager::getSingleton().getByName(matName);
 
     Ogre::ManualObject * man = sm->createManualObject(name);
     man->begin(matName, Ogre::RenderOperation::OT_TRIANGLE_LIST);
-    //for (int i = 0; i < _numVertexes; ++i) {
-        //man->position(vertexesCoords[i][0], vertexesCoords[i][1], vertexesCoords[i][2]);
-        //man->normal(0,0,1);
-    //}
-    int mapSize = 3;
+    for (int i = 0; i < _numVertexes; i+=2) {
+        man->position(_vertexCoords[i], _vertexCoords[i+1], 0);
+        man->normal(0,0,1);
+    }
     //for(int z = 0; z < mapSize; ++z) {
        //for(int x = 0; x < mapSize; ++x) {
-          man->position(-1,1,0);
-          man->normal(0,0,1);
+          //man->position(-1,1,0);
+          //man->normal(0,0,1);
 
-          man->position(-1,-1,0);
-          man->normal(0,0,1);
+          //man->position(-1,-1,0);
+          //man->normal(0,0,1);
 
-          man->position(1,-1,0);
-          man->normal(0,0,1);
+          //man->position(1,-1,0);
+          //man->normal(0,0,1);
 
-          man->position(1,1,0);
-          man->normal(0,0,1);
+          //man->position(1,1,0);
+          //man->normal(0,0,1);
 
           //man->position(2., 1., 0.);
           //man->normal(0,0,1);
        //}
     //}
+    int triangleNum;
+    vector <int*> indices = points_delaunay_naive_2d(vertexNum,
+            (double*)_vertexCoords, &triangleNum);
 
-    man->triangle(1, 2, 0);
-    man->triangle(2, 3, 0);
+    for (int i = 0; i < indices.size(); i++) {
+        man->triangle(indices[i][0], indices[i][1], 0);
+    }
     //man->triangle(2, 4, 3);
     //for(int z = 0; z < mapSize-1; ++z) {
         //for(int x = 0; x < mapSize-1; ++x) {
@@ -205,6 +218,7 @@ BasicGeometryObject::~BasicGeometryObject()
 {
     delete _node;
     delete _entity;
+    delete _vertexCoords;
 }
 
 void BasicGeometryObject::setNormal(const float& x, const float& y, const float& z)

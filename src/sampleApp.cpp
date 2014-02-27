@@ -53,7 +53,7 @@ void sampleApp::createScene(){
 
     TriangleBuilder Jamshut;
     float colors[3] = {0,0,1};
-     
+
     const float ** coords = new const float*[3];
     float *arr;
 

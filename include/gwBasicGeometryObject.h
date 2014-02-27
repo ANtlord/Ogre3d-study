@@ -13,8 +13,8 @@ class BasicGeometryObject {
 public:
     BasicGeometryObject();
 
-    BasicGeometryObject(const std::string &name, const float normalCoords[3], const short &vertexNum,
-        const uint16_t &numTriangles, const float ** vertexesCoords, Ogre::SceneManager * sm);
+    //BasicGeometryObject(const std::string &name, const float normalCoords[3], const short &vertexNum,
+        //const uint16_t &numTriangles, const float ** vertexesCoords, Ogre::SceneManager * sm);
 
     BasicGeometryObject(const std::string &name, const float normalCoords[3], const short &vertexNum,
             const uint16_t &numTriangles, const float ** vertexesCoords, Ogre::SceneManager * sm,
@@ -41,7 +41,7 @@ protected:
 private:
     void baseConstructor(const std::string &name, const float normalCoords[3],
             const short &vertexNum, const uint16_t &numTriangles,
-            const float ** vertexesCoords, Ogre::SceneManager * sm);
+            const float * vertexesCoords, Ogre::SceneManager * sm);
     unsigned short _numVertexes;
     unsigned short _numTriangles;
     float _normalCoords[3];
@@ -50,6 +50,7 @@ private:
     Ogre::SceneNode * _node;
     Ogre::Entity * _entity;
     Ogre::MaterialPtr _material;
+    float * _vertexCoords;
 };
 
 }
