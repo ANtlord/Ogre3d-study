@@ -8,7 +8,36 @@
 #include <OgreSceneManager.h>
 
 namespace GW {
-
+/*
+ * SAMPLE USAGE:
+ * const float ** coords3 = new const float*[5];
+ * float *arr;
+ * 
+ * arr = new float[2];
+ * arr[0] = 0; arr[1] = -1;
+ * coords3[0] = arr;
+ * 
+ * arr = new float[2];
+ * arr[0] = 0.5; arr[1] = 0.5;
+ * coords3[1] = arr;
+ * 
+ * arr = new float[2];
+ * arr[0] = -0.5; arr[1] = 1;
+ * coords3[2] = arr;
+ * 
+ * arr = new float[2];
+ * arr[0] = -1.0; arr[1] = 0.5;
+ * coords3[3] = arr;
+ * 
+ * arr = new float[2];
+ * arr[0] = -1; arr[1] = -0.5;
+ * coords3[4] = arr;
+ * 
+ * BasicGeometryObject * basicGeometryObject = new BasicGeometryObject("qwe", colors, 5,
+ *         coords3, _scene_manager, MAT_NAME);
+ * basicGeometryObject->getNode()->translate(-10,10,0);
+ *
+ */
 class BasicGeometryObject {
 public:
     BasicGeometryObject();
