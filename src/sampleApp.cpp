@@ -3,8 +3,7 @@
 
 #include "gwGameState.h"
 #include "gwGameStateManager.h"
-#include "../include/gwTriangleBuilder.h"
-#include "../include/gwQuadBuilder.h"
+#include "../include/gwSoundManager.h"
 
 #include "OgreEntity.h"
 #include <OgreCamera.h>
@@ -62,4 +61,23 @@ void sampleApp::createScene(){
     lFirstPass->setSpecular(0.0f, 0.0f, 1.0f, 1.0f);
     lFirstPass->setShininess(0.0f);
     lFirstPass->setSelfIllumination(0.1f, 0.1f, 0.1f);
+
+    SoundManager* soundMgr = SoundManager::createManager();
+    soundMgr->init();
+    soundMgr->setAudioPath( (char*) ".\\" );
+ 
+    unsigned int audioId;
+ 
+    // We loop to be able to test the pause function
+    soundMgr->loadAudio( "test.ogg", &audioId, true);
+    soundMgr->playAudio( audioId, true );
+ 
+    //soundMgr->pauseAudio( audioId );
+ 
+ //   soundMgr->resumeAudio( audioId );
+    //soundMgr->resumeAllAudio( );
+ 
+    // Force an audio source to stop playing.
+    //soundMgr->stopAudio( audioId );
+    //soundMgr->releaseAudio( audioId );
 }
