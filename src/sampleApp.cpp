@@ -62,16 +62,9 @@ void sampleApp::createScene(){
     lFirstPass->setShininess(0.0f);
     lFirstPass->setSelfIllumination(0.1f, 0.1f, 0.1f);
 
-    SoundManager* soundMgr = SoundManager::createManager();
-    soundMgr->init();
-    soundMgr->setAudioPath( (char*) ".\\" );
- 
-    unsigned int audioId;
- 
-    // We loop to be able to test the pause function
-    soundMgr->loadAudio( "test.ogg", &audioId, true);
-    soundMgr->playAudio( audioId, true );
- 
+    SoundManager::init();
+    SoundManager::pleerCreation();
+    
     //soundMgr->pauseAudio( audioId );
  
  //   soundMgr->resumeAudio( audioId );
