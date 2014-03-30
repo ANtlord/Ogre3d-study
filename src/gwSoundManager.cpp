@@ -125,16 +125,30 @@ void SoundManager::pleerCreation(AAssetManager * aassetMgr)
         outputMixObj
     };
 
+    SLPlayItf player;
     SLDataSink audioSnk = {&dataLocatorOut, NULL};
     const SLInterfaceID pIDs[2] = {SL_IID_PLAY, SL_IID_SEEK};
     const SLboolean pIDsRequired[2] = {SL_BOOLEAN_TRUE, SL_BOOLEAN_TRUE};
     SLObjectItf playerObj;
     LOGI("pleerCreation player creating");
     SLresult result = (*engine)->CreateAudioPlayer(engine, &playerObj, &audioSrc, &audioSnk, 2, pIDs, pIDsRequired);
+    if (result != SL_RESULT_SUCCESS)
+        LOGI("error after creation audio player");
+    else
+        LOGI("creation audio player - ok");
+
 
     LOGI("pleerCreation player realizing");
     result = (*playerObj)->Realize(playerObj, SL_BOOLEAN_FALSE);
-    LOGI("pleerCreation finished");
+    if (result != SL_RESULT_SUCCESS)
+        LOGI("error after trying play sound");
+    else
+        LOGI("playing sound - ok");
+
+    result = (*playerObj)->GetInterface(playerObj, SL_IID_PLAY, &player);
+
+    result = (*player)->SetPlayState(player, SL_PLAYSTATE_PLAYING);
+    //LOGI("pleerCreation finished");
 }
 
 }
