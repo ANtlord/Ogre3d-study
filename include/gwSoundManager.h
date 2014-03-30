@@ -17,11 +17,11 @@ namespace GW {
 
     class SoundManager {
     public:
-        static ResourseDescriptor loadResourceDescriptor(const char* path);
+        static ResourseDescriptor loadResourceDescriptor(const char* path, AAssetManager * aassetMgr);
         SoundManager ();
         virtual ~SoundManager ();
         static void init();
-        static void pleerCreation();
+        static void pleerCreation(AAssetManager * aassetMgr);
     private:
     };
 } /* GW */

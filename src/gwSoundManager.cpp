@@ -22,26 +22,33 @@ SoundManager::~SoundManager( void )
 }
 
 /*Вновь используем AAssetManager*/
-ResourseDescriptor SoundManager::loadResourceDescriptor(const char* path)
+ResourseDescriptor SoundManager::loadResourceDescriptor(const char* path, AAssetManager * aassetMgr)
 {
-    //FILE * f = fopen(path, "r");
-    Ogre::ArchiveManager *mgr = Ogre::ArchiveManager::getSingletonPtr();
-    Ogre::ArchiveManager::ArchiveMapIterator archIter = mgr->getArchiveIterator();
-    bool flag = archIter.begin()->second->exists(path);
+    FILE * f = fopen(path, "r");
+    //Ogre::ArchiveManager *mgr = Ogre::ArchiveManager::getSingletonPtr();
+    //Ogre::ArchiveManager::ArchiveMapIterator archIter = mgr->getArchiveIterator();
+    //bool flag = archIter.begin()->second->exists(path);
 
-    if (flag == true) {
-        LOGI("FILE IS EXIST.");
-    }
-    else {
-        LOGI("FILE DOESN'T EXIST.");
-    }
+    //if (f != NULL) {
+        //LOGI("FILE IS EXIST.");
+    //}
+    //else {
+        //LOGI("FILE DOESN'T EXIST.");
+    //}
+    if (aassetMgr == NULL) 
+        LOGI("aassetMgr == NULL");
 
-    AAssetManager * assetManager;
-    AAsset* asset = AAssetManager_open(assetManager, path, AASSET_MODE_UNKNOWN);
+    AAsset* asset = AAssetManager_open(aassetMgr, path, AASSET_MODE_UNKNOWN);
+    LOGI("123");
     ResourseDescriptor resourceDescriptor;
+    LOGI("456");
+    if (asset == NULL) 
+        LOGI("asset == NULL");
     resourceDescriptor.descriptor = AAsset_openFileDescriptor(asset,
             &resourceDescriptor.start, &resourceDescriptor.length);
+    LOGI("789");
     AAsset_close(asset);
+    LOGI("0");
     return resourceDescriptor;
 }
 
@@ -89,11 +96,11 @@ void SoundManager::init()
     LOGI("init finished");
 }
 
-void SoundManager::pleerCreation()
+void SoundManager::pleerCreation(AAssetManager * aassetMgr)
 {
     LOGI("pleerCreation started");
-    ResourseDescriptor resourseDescriptor = loadResourceDescriptor("test.ogg");
-    //ResourseDescriptor resourseDescriptor = loadResourceDescriptor("/storage/emulated/0/Alarms/02 - Disciple.mp3");
+    ResourseDescriptor resourseDescriptor = loadResourceDescriptor("test.ogg", aassetMgr);
+    //ResourseDescriptor resourseDescriptor = loadResourceDescriptor("/storage/emulated/0/Alarms/10_Rise From The Sea Of Flames.mp3", aassetMgr);
     LOGI("pleerCreation file used");
 
     SLDataLocator_AndroidFD locatorIn = {

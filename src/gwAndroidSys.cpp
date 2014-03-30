@@ -139,10 +139,8 @@ static void app_init(app_user_data* data){
     if(data->init == true)
         return;
     data->root = new Ogre::Root();
-//    GW::getApp();
-//    GW::App::getSingleton()->appInit(data->root);
-    getApp()->appInit(data->root);
-    // data->root = new Ogre::Root::getSingleton();1
+    GW::App::aassetMgr = data->android_app_state->activity->assetManager;
+    getApp()->appInit(data->root, data->android_app_state->activity->assetManager);
 
 #ifdef OGRE_STATIC_LIB
     data->plugin_loader = new Ogre::StaticPluginLoader();

@@ -63,7 +63,7 @@ void sampleApp::createScene(){
     lFirstPass->setSelfIllumination(0.1f, 0.1f, 0.1f);
 
     SoundManager::init();
-    SoundManager::pleerCreation();
+    SoundManager::pleerCreation(GW::App::aassetMgr);
     
     //soundMgr->pauseAudio( audioId );
  

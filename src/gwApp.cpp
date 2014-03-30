@@ -3,12 +3,15 @@
 #include <OgreEntity.h>
 #include <OgreCamera.h>
 namespace GW{
+
+AAssetManager * App::aassetMgr = NULL;
 void*   App::_self = NULL;
 App::App(){
 
 }
-void App::appInit 		(Ogre::Root *root){
+void App::appInit 		(Ogre::Root *root, AAssetManager *_aassetMgr){
 	_root = root;
+    _aassetMgr = _aassetMgr;
 }
 void App::appClose		(){
 
