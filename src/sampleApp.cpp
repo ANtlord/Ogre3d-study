@@ -3,7 +3,7 @@
 
 #include "gwGameState.h"
 #include "gwGameStateManager.h"
-#include "../include/gwSoundManager.h"
+#include "../include/gwSound.h"
 
 #include "OgreEntity.h"
 #include <OgreCamera.h>
@@ -62,8 +62,8 @@ void sampleApp::createScene(){
     lFirstPass->setShininess(0.0f);
     lFirstPass->setSelfIllumination(0.1f, 0.1f, 0.1f);
 
-    SoundManager::init();
-    SoundManager::pleerCreation(GW::App::aassetMgr);
+    Sound * sound = new Sound("test.ogg", GW::App::aassetMgr);
+    sound->play();
     
     //soundMgr->pauseAudio( audioId );
  

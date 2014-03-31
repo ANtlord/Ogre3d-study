@@ -21,7 +21,7 @@ appname* getApp() { return static_cast<appname*>(appname::getSingleton()); }
 
 class App{
 public:
-    virtual void appInit(Ogre::Root *root, AAssetManager *_aassetMgr);
+    virtual void appInit(Ogre::Root *root);
     virtual void appClose();
     virtual void createScene();
     virtual void setupDisplay(Ogre::RenderWindow *window);

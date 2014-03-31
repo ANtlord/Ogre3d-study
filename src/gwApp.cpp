@@ -9,9 +9,8 @@ void*   App::_self = NULL;
 App::App(){
 
 }
-void App::appInit 		(Ogre::Root *root, AAssetManager *_aassetMgr){
+void App::appInit 		(Ogre::Root *root){
 	_root = root;
-    _aassetMgr = _aassetMgr;
 }
 void App::appClose		(){
 
