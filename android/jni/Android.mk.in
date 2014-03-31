@@ -7,7 +7,7 @@ LOCAL_PATH := $(call my-dir)
 		-L@OGRE_ROOT/AndroidDependencies/lib/@ARMEABI
 
     LOCAL_LDLIBS	+= -lPlugin_ParticleFXStatic -lPlugin_OctreeSceneManagerStatic -lRenderSystem_GLES2Static -lOgreRTShaderSystemStatic -lOgreOverlayStatic -lOgreTerrainStatic -lOgrePagingStatic -lOgreVolumeStatic -lOgreMainStatic
-    LOCAL_LDLIBS	+= -lzzip -lz -lFreeImage -lfreetype -lOIS \
+    LOCAL_LDLIBS	+= -lzzip -lz -lFreeImage -lfreetype -lOIS -lOpenSLES \
 					   @OGRE_ROOT/@ANDROID_BUILD/systemlibs/@ARMEABI/libsupc++.a \
 					   @OGRE_ROOT/@ANDROID_BUILD/systemlibs/@ARMEABI/libstdc++.a \
 					   @OGRE_ROOT/@ANDROID_BUILD/SampleBrowserNDK/obj/local/@ARMEABI/libcpufeatures.a \
