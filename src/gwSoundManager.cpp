@@ -2,6 +2,7 @@
 #include <android/log.h>
 #include <OgreArchive.h>
 #include <OgreArchiveManager.h>
+#include <stdexcept>
 
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "SOUND_MANAGER", __VA_ARGS__))
 #define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "SOUND_MANAGER", __VA_ARGS__))
