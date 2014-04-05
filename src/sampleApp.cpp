@@ -3,8 +3,8 @@
 
 #include "gwGameState.h"
 #include "gwGameStateManager.h"
-#include "../include/gwTriangleBuilder.h"
-#include "../include/gwQuadBuilder.h"
+#include "../include/gwSound.h"
+#include "../include/gwSoundManager.h"
 
 #include "OgreEntity.h"
 #include <OgreCamera.h>

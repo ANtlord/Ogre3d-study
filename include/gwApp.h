@@ -9,6 +9,7 @@
 #include "OgreRenderWindow.h"
 #include <map>
 #include "gwGameStateManager.h"
+#include <android_native_app_glue.h>
 
 namespace GW{
 
@@ -36,6 +37,7 @@ public:
     inline StateManager* getStateManager( ){
         return &_states;
     }
+    static AAssetManager * aassetMgr;
 protected:
     App();
 //    Ogre::SceneManager* _scene_manager;

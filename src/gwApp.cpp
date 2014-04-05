@@ -3,6 +3,8 @@
 #include <OgreEntity.h>
 #include <OgreCamera.h>
 namespace GW{
+
+AAssetManager * App::aassetMgr = NULL;
 void*   App::_self = NULL;
 App::App(){
 
