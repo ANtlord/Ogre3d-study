@@ -13,7 +13,7 @@ using namespace std;
 namespace GW {
 SoundManager * SoundManager::_self = 0;
 
-inline SoundManager * SoundManager::getSingleton()
+SoundManager * SoundManager::getSingleton()
 {
     if (_self == 0) {
         _self = new SoundManager();
@@ -58,6 +58,11 @@ bool SoundManager::removeSound(string key)
     else {  // Value with given key exists. Objects was not added.
         return false;
     }
+}
+
+const map <std::string, Sound*> SoundManager::getMap() const
+{
+    return _sounds;
 }
 
 }

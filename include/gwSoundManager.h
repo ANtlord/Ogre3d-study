@@ -24,7 +24,7 @@ delete sound from store and from memory.
     @brief Method for getting object of manager.
     @return Single objects of GW::SoundManager. 
     */
-        inline static SoundManager*	getSingleton();
+        static SoundManager * getSingleton();
 
     /**
     @brief Method gets sound object from store by key.
@@ -48,6 +48,12 @@ delete sound from store and from memory.
     successful.
     */
         bool removeSound(std::string key);
+
+    /**
+    @brief Method returns container of sounds.
+    @return map object wih sounds.
+    */
+        const std::map <std::string, Sound*> getMap() const;
 
     protected:
     /**
