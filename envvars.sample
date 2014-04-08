@@ -1,6 +1,6 @@
 #!/bin/bash
 export PROJECT_NAME=GeometryWars
-export ANDROID_NDK=/home/nvpopov/apps/android-deps/android-ndk-r9c
+export ANDROID_NDK=/opt/android-ndk
 export ANDROID_BUILD=android_build
 export ARMEABI=armeabi
 export ARCH=arm
